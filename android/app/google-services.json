@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "967491953906",
+    "firebase_url": "https://spark-5e6d2.firebaseio.com",
+    "project_id": "spark-5e6d2",
+    "storage_bucket": "spark-5e6d2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:967491953906:android:3e058a085d3f502a979c6b",
+        "android_client_info": {
+          "package_name": "com.test.spark"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "967491953906-j15jgdm0a4o46vr3ppc0tp6brvtkc8m9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAC2x7yN1Et7ksTQBvv2Zjv1HF_oJxSaMM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "967491953906-j15jgdm0a4o46vr3ppc0tp6brvtkc8m9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

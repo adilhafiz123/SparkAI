@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hello_fluter/services/auth.dart';
-import 'package:hello_fluter/shared/loading.dart';
+import 'package:Spark/services/auth.dart';
+import 'package:Spark/shared/loading.dart';
 
 class Register extends StatefulWidget {
 

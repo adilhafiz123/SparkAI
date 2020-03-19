@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hello_fluter/models/user.dart';
-import 'package:hello_fluter/services/database.dart';
+import 'package:Spark/models/user.dart';
+import 'package:Spark/services/profile_data.dart';
 
 class AuthService {
 
@@ -44,7 +44,7 @@ class AuthService {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password); 
       FirebaseUser user = result.user;
-      await DatabaseService(uid: user.uid).updateUserData("NewMember", 0, "NewMemberProfession", []);
+      await DatabaseService(uid: user.uid).updateUserData("NewMember", 0, "NewMemberProfession");
       return _userFromFireBaseUser(user);
     } 
     catch(e) {

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hello_fluter/models/userData.dart';
+import 'package:Spark/models/userData.dart';
 
 class DatabaseService {
 
@@ -8,12 +8,11 @@ class DatabaseService {
 
   DatabaseService({ this.uid });
 
-  Future updateUserData(String name, int age, String profession, List<String> chats) async {
+  Future updateUserData(String name, int age, String profession) async {
     return await userCollection.document(uid).setData({
-      "name"       : name,
+      "first_name"       : name,
       "age"        : age,
-      "profession" : profession,
-      "chats"      : chats   
+      "profession" : profession
     });
   }
 
@@ -21,8 +20,9 @@ class DatabaseService {
   {
     return snapshot.documents.map( (doc) {
       return UserData(
-        firstname: doc.data["name"] ?? "",
-        age: doc.data["age"] ?? 0,
+        firstname:  doc.data["first_name"]        ?? "",
+        age:        doc.data["age"]         ?? 0,
+        profession: doc.data["profession"]  ?? "",
         );
     }).toList();
 

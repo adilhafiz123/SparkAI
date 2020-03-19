@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hello_fluter/models/userData.dart';
-import 'package:hello_fluter/screens/messages.dart';
-import 'package:hello_fluter/services/database.dart';
+import 'package:Spark/models/userData.dart';
+import 'package:Spark/screens/discover.dart';
+import 'package:Spark/screens/messages.dart';
+import 'package:Spark/services/profile_data.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
@@ -10,13 +11,36 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  int _currentIndex = 0;
+  final _tabs = [
+    DiscoverView(),
+    MessageView()
+  ];
+
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<UserData>>.value(
       value: DatabaseService().userStream,
       child: Scaffold(
-        body:
-            MessageView(), //This will be a tab view eventually with MEssages being just one of the tabs!
+        body: _tabs[_currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          selectedItemColor: Color.fromRGBO(215, 2, 101, 1),
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_box),
+              title: Text("Discover", style: TextStyle(fontFamily: "Nunito", color: Colors.black)),
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.chat),
+                title:
+                    Text("Messages", style: TextStyle(fontFamily: "Nunito", color: Colors.black)))
+          ],
+          onTap: (index) {
+            setState( () => _currentIndex = index );
+            }
+        )
       ),
     );
   }

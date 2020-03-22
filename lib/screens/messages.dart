@@ -1,9 +1,13 @@
+import 'package:Spark/services/chats.dart';
+import 'package:Spark/shared/loading.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:Spark/models/userData.dart';
+import 'package:Spark/models/chat.dart';
 import 'package:Spark/screens/chat_profile.dart';
 import 'package:Spark/services/auth.dart';
 import 'package:Spark/shared/appbar.dart';
-import 'package:provider/provider.dart';
+import 'package:Spark/services/user.dart';
+import 'package:Spark/models/userData.dart';
 
 class MessageTab extends StatelessWidget {
   String imagePath;
@@ -43,7 +47,7 @@ class MessageTab extends StatelessWidget {
         child: Row(children: <Widget>[
           SizedBox(width: 16),
           CircleAvatar(
-            radius: 30,
+            radius: 34,
             backgroundImage: AssetImage(imagePath),
           ),
           SizedBox(
@@ -60,7 +64,7 @@ class MessageTab extends StatelessWidget {
                           fontSize: 20,
                           fontFamily: 'Nunito',
                           fontWeight: FontWeight.bold)),
-                  SizedBox(width: 15),
+                  SizedBox(width: 17),
                   Text(profession,
                       style: TextStyle(
                           fontSize: 13,
@@ -74,7 +78,7 @@ class MessageTab extends StatelessWidget {
                       color: Color.fromRGBO(85, 99, 110, 1),
                       fontFamily: 'Nunito')),
               SizedBox(
-                height: 4,
+                height: 6,
               ),
               Text("1 minute ago",
                   style: TextStyle(
@@ -90,29 +94,48 @@ class MessageTab extends StatelessWidget {
 }
 
 class MessageView extends StatefulWidget {
+  final String currentUserUid;
+  
+  const MessageView({Key key, this.currentUserUid}): super(key: key);
+
   @override
   _MessageViewState createState() => _MessageViewState();
 }
 
 class _MessageViewState extends State<MessageView> {
-  AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
-    final _userDataList = Provider.of<List<UserData>>(context);
 
-    return Scaffold(
+        return Scaffold(
         appBar: buildMessagesAppBar(),
-        body: ListView.builder(
-          itemCount: _userDataList == null
-              ? 0
-              : _userDataList.length, // Why is this object sometimes null???
-          itemBuilder: (BuildContext context, int index) {
-            if (_userDataList != null) {
-              return MessageTab(_userDataList[index]);
+        body: FutureBuilder<QuerySnapshot>(
+          future: ChatsService(myUid: widget.currentUserUid).getUsersChats(),
+          builder: (_, chatSnapshot) {
+            if (chatSnapshot.connectionState == ConnectionState.waiting) {
+              return Loading();
             }
-            return null;
-          },
-        ));
-  }
+            else {
+              return ListView.builder(
+                itemCount: chatSnapshot.data.documents.length,
+                itemBuilder: (_, index) {
+                    var chatData = chatSnapshot.data.documents[index].data;
+                    var uid1 = chatData["uid1"];
+                    var uid2 = chatData["uid2"];
+
+                    return FutureBuilder<UserData>(
+                      future: UserService(uid: uid1).getUserDocFutureFromUid(uid2),
+                      builder: (_, userDataSnapshot) {
+                        if (userDataSnapshot.connectionState == ConnectionState.waiting) {
+                          return Text(""); // Need to find a better way to overcome this delay (why is there always a delay???)
+                        }
+                        else {
+                          return MessageTab(userDataSnapshot.data);
+                        }
+                      });
+                });
+            }
+          })
+        );
+      }
 }

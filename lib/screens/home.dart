@@ -2,26 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:Spark/models/userData.dart';
 import 'package:Spark/screens/discover.dart';
 import 'package:Spark/screens/messages.dart';
-import 'package:Spark/services/profile_data.dart';
+import 'package:Spark/services/user.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
+  final String currentUserUid;
+  
+  const Home({ this.currentUserUid });
+
   @override
   State<StatefulWidget> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-
   int _currentIndex = 0;
-  final _tabs = [
-    DiscoverView(),
-    MessageView()
-  ];
+  final _tabs = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _tabs.add(DiscoverView());
+    _tabs.add(MessageView(currentUserUid: widget.currentUserUid));
+  }
 
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<UserData>>.value(
-      value: DatabaseService().userStream,
+      value: UserService().userStream,
       child: Scaffold(
         body: _tabs[_currentIndex],
         bottomNavigationBar: BottomNavigationBar(

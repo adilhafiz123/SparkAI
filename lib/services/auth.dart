@@ -1,10 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Spark/models/user.dart';
-import 'package:Spark/services/profile_data.dart';
+import 'package:Spark/services/user.dart';
 
 class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<String> getCurrentUserUid() async {
+    final FirebaseUser user = await _auth.currentUser();
+    return user.uid;
+    // here you write the codes to input the data into firestore
+  }
 
   User _userFromFireBaseUser(FirebaseUser user) {
     return user != null ? User(uid: user.uid) : null;
@@ -44,7 +50,7 @@ class AuthService {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password); 
       FirebaseUser user = result.user;
-      await DatabaseService(uid: user.uid).updateUserData("NewMember", 0, "NewMemberProfession");
+      await UserService(uid: user.uid).updateCurrentUserData("NewMember", 0, "NewMemberProfession");
       return _userFromFireBaseUser(user);
     } 
     catch(e) {

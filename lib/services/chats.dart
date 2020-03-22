@@ -7,9 +7,9 @@ class ChatsService {
 
   ChatsService({this.myUid});
 
-  Future<QuerySnapshot> getUsersChat() {
+  Future<QuerySnapshot> getUsersChats() {
     return chatsCollection
-    .where(myUid, whereIn: ["uid1", "uid2"])
+    .where("uid1", isEqualTo: myUid)
     .getDocuments();
   }
 

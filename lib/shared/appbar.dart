@@ -87,9 +87,10 @@ Widget buildChatProfileAppBar(String name, String imagePath) {
     ]),
     backgroundColor: Colors.white,
     bottom: TabBar(
-      labelColor: Colors.teal,
+      labelColor: Color.fromRGBO(1, 170, 185, 1),
       unselectedLabelColor: Colors.grey,
-      indicatorColor: Colors.teal,
+      indicatorColor: Color.fromRGBO(1, 170, 185, 1),
+      //indicator: BoxDecoration(border: Border.all(width: 1, color: Color.fromRGBO(1, 170, 185, 1))),//color: Color.fromRGBO(1, 170, 185, 1)),
       labelStyle: TextStyle(
         color: Colors.grey,
         fontFamily: "nunito",

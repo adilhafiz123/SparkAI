@@ -6,10 +6,10 @@ import 'package:Spark/shared/appbar.dart';
 class ChatProfile extends StatefulWidget {
   final image;
   final name;
-  final chats;
+  final messages;
 
-  ChatProfile({this.image, this.name, this.chats}) {
-    if (image == null || name == null) {
+  ChatProfile({this.image, this.name, this.messages}) {
+    if (image == null || name == null || messages == null) {
       AlertDialog(
         title: Text("Cant instantiate a ChatProfile without an Image and Name"),
       );
@@ -30,7 +30,7 @@ class _ChatProfileState extends State<ChatProfile> {
         appBar: buildChatProfileAppBar(widget.name, widget.image),
         body: TabBarView(
           children: <Widget>[
-            ChatView(chats: widget.chats), 
+            ChatView(messages: widget.messages), 
             Profile()
             ],
         ),

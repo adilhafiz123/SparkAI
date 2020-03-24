@@ -1,25 +1,33 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:Spark/models/chat.dart';
 
 class ChatView extends StatefulWidget {
   final image;
   final name;
-  final chats;
+  final messages;
 
-  ChatView({this.image, this.name, this.chats}) {
-    if (image == null || name == null) {
+  ChatView({this.image, this.name, this.messages}) {
+    if (image == null || name == null || messages == null) {
       AlertDialog(
-        title: Text("Cant instantiate a ChatView without an Image and Name"),
+        title: Text(
+            "Cant instantiate a ChatView without an Image, Name and messages"),
       );
     }
   }
 
   @override
-  _ChatViewState createState() => _ChatViewState();
+  _ChatViewState createState() => _ChatViewState(messages);
 }
 
 class _ChatViewState extends State<ChatView> {
   var _inputText;
   var _switchState = false;
+  var _messages;
+
+  _ChatViewState(List<Message> messages) {
+    _messages = messages;
+  }
 
   _buildMessageComposer() {
     return Container(
@@ -55,7 +63,10 @@ class _ChatViewState extends State<ChatView> {
             iconSize: 25,
             onPressed: () {
               setState(() {
-                widget.chats.add(_inputText);
+                _messages.add(Message(
+                    content: _inputText,
+                    createdAt: Timestamp.now(),
+                    uid: "MyUID")); //TODO: Need to pass down Current
               });
             },
           )
@@ -63,24 +74,14 @@ class _ChatViewState extends State<ChatView> {
   }
 
   _buildMessage({String text, bool isMe}) {
-    return Container(
-      child: Text(
-        text,
-        style: TextStyle(
-            color: isMe ? Colors.white : Colors.black,
-            fontFamily: "Nunito",
-            fontSize: 15,
-            fontWeight: FontWeight.w500),
-      ),
-      margin: isMe
-          ? EdgeInsets.only(left: 40, top: 8, bottom: 8)
-          : EdgeInsets.only(right: 40, top: 8, bottom: 8),
-      padding: EdgeInsets.symmetric(horizontal: 22, vertical: 12),
-      decoration: BoxDecoration(
-          color: isMe
-              ? Colors.teal //.fromRGBO(215, 2, 101, 1)
-              : Color.fromRGBO(240, 244, 253, 1),
-          //border: BorderStyle.solid,
+    return Align(
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: isMe
+            ? EdgeInsets.only(top: 5, bottom: 5)
+            : EdgeInsets.only(top: 5, bottom: 5),
+        child: Material(
+          elevation: 1,
           borderRadius: isMe
               ? BorderRadius.only(
                   topLeft: Radius.circular(20),
@@ -90,15 +91,28 @@ class _ChatViewState extends State<ChatView> {
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
                   bottomRight: Radius.circular(20),
-                )),
+                ),
+          color: isMe
+              ? Color.fromRGBO(1, 170, 185, 1)
+              : Color.fromRGBO(240, 244, 253, 1),
+          child: Container(
+            child: Text(
+              text,
+              style: TextStyle(
+                  color: isMe ? Colors.white : Colors.black,
+                  fontFamily: "Nunito",
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          ),
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    //_messageList.add("Doing good thanks. How are you today?");
-    //_messageList.add("W'Salaam, great thanks! How are you?");
-    //_messageList.add("Salaam! How's it going?");
     return Scaffold(
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
@@ -108,11 +122,11 @@ class _ChatViewState extends State<ChatView> {
             children: <Widget>[
               Expanded(
                   child: ListView.builder(
-                reverse: true,
-                itemCount: widget.chats.length,
+                //reverse: true,
+                itemCount: _messages.length,
                 itemBuilder: (context, index) {
                   return _buildMessage(
-                      text: widget.chats[index], isMe: _switchState);
+                      text: _messages[index].content, isMe: _switchState);
                 },
               )),
               _buildMessageComposer()

@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Message {
   String content;
-  DateTime createdAt;
+  Timestamp createdAt;
   String uid;
+
+  Message( {this.content, this.createdAt, this.uid} );
 }
 
 class Chat {

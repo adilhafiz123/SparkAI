@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Spark/models/chat.dart';
 import 'package:Spark/screens/chat_profile.dart';
-import 'package:Spark/services/auth.dart';
 import 'package:Spark/shared/appbar.dart';
 import 'package:Spark/services/user.dart';
 import 'package:Spark/models/userData.dart';
@@ -14,12 +13,14 @@ class MessageTab extends StatelessWidget {
   String firstName;
   String lastMsg;
   String profession;
+  List<Message> messages = [];
 
-  MessageTab(UserData userData) {
+  MessageTab(userData, _messages) {
     imagePath = "images/mawra.jpg";
     firstName = userData.firstname;
     lastMsg = "Hi! How are you?";
     profession = userData.profession;
+    this.messages = _messages;
   }
 
   @override
@@ -36,7 +37,7 @@ class MessageTab extends StatelessWidget {
                 builder: (_) => ChatProfile(
                       image: imagePath,
                       name: firstName,
-                      chats: [],
+                      messages: messages,
                     ))); 
       },
       child: Container(
@@ -104,6 +105,17 @@ class MessageView extends StatefulWidget {
 
 class _MessageViewState extends State<MessageView> {
 
+  List<Message> chatFromMap(List<dynamic> chatData) {
+    return chatData.map( (map) { 
+      return Message(
+        content: map["content"] ?? "",
+        createdAt: map["created_at"] ?? Timestamp.now(),
+        uid: map["uid"] ?? "",
+        );
+    }).toList();
+  }
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -120,9 +132,12 @@ class _MessageViewState extends State<MessageView> {
                 itemCount: chatSnapshot.data.documents.length,
                 itemBuilder: (_, index) {
                     var chatData = chatSnapshot.data.documents[index].data;
-                    var uid1 = chatData["uid1"];
-                    var uid2 = chatData["uid2"];
-
+                    var uid1 = chatData["uid1"] ?? "";
+                    var uid2 = chatData["uid2"] ?? "";
+                    List<Message> messages = [];
+                    if (chatData["messages"] != null) {
+                      messages = chatFromMap(chatData["messages"]);
+                    }
                     return FutureBuilder<UserData>(
                       future: UserService(uid: uid1).getUserDocFutureFromUid(uid2),
                       builder: (_, userDataSnapshot) {
@@ -130,7 +145,7 @@ class _MessageViewState extends State<MessageView> {
                           return Text(""); // Need to find a better way to overcome this delay (why is there always a delay???)
                         }
                         else {
-                          return MessageTab(userDataSnapshot.data);
+                          return MessageTab(userDataSnapshot.data, messages);
                         }
                       });
                 });
@@ -138,4 +153,5 @@ class _MessageViewState extends State<MessageView> {
           })
         );
       }
+                    
 }

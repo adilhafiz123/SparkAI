@@ -2,19 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:Spark/screens/chat.dart';
 import 'package:Spark/shared/profile.dart';
 import 'package:Spark/shared/appbar.dart';
+import 'package:Spark/models/userData.dart';
 
 class ChatProfile extends StatefulWidget {
-  final image;
-  final name;
+  final String myUid;
+  final UserData userData;
   final messages;
 
-  ChatProfile({this.image, this.name, this.messages}) {
-    if (image == null || name == null || messages == null) {
-      AlertDialog(
-        title: Text("Cant instantiate a ChatProfile without an Image and Name"),
-      );
-    }
-  }
+  ChatProfile({this.myUid, this.userData, this.messages});
 
   @override
   _ChatProfileState createState() => _ChatProfileState();
@@ -27,10 +22,10 @@ class _ChatProfileState extends State<ChatProfile> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: buildChatProfileAppBar(widget.name, widget.image),
+        appBar: buildChatProfileAppBar(widget.userData.firstname, widget.userData.imagepath),
         body: TabBarView(
           children: <Widget>[
-            ChatView(messages: widget.messages), 
+            ChatView(myUid: widget.myUid, theirUid: widget.userData.uid, messages: widget.messages), 
             Profile()
             ],
         ),

@@ -8,20 +8,27 @@ import 'package:Spark/shared/appbar.dart';
 import 'package:Spark/services/user.dart';
 import 'package:Spark/models/userData.dart';
 
-class MessageTab extends StatelessWidget {
-  String imagePath;
-  String firstName;
-  String lastMsg;
-  String profession;
-  List<Message> messages = [];
+class MessageTab extends StatefulWidget {
+  final myUid;
+  final userData;
+  final messages; //TODO: Prob not a good idea to have two copies of this in memory!
 
-  MessageTab(userData, _messages) {
-    imagePath = "images/mawra.jpg";
-    firstName = userData.firstname;
-    lastMsg = "Hi! How are you?";
-    profession = userData.profession;
-    this.messages = _messages;
-  }
+  MessageTab({ this.myUid, this.userData, this.messages });
+
+  @override
+  _MessageTabState createState() => _MessageTabState();
+}
+
+class _MessageTabState extends State<MessageTab> {
+  // String myUid;
+  // UserData userData;
+  // List<Message> messages = [];
+
+  // _MessageTabState(myUid, userData, messages) {
+  //   myUid      = myUid;
+  //   userData   = userData;
+  //   messages   = messages;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +42,9 @@ class MessageTab extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (_) => ChatProfile(
-                      image: imagePath,
-                      name: firstName,
-                      messages: messages,
+                      myUid: widget.myUid,
+                      userData: widget.userData,
+                      messages: widget.messages,
                     ))); 
       },
       child: Container(
@@ -49,7 +56,7 @@ class MessageTab extends StatelessWidget {
           SizedBox(width: 16),
           CircleAvatar(
             radius: 34,
-            backgroundImage: AssetImage(imagePath),
+            backgroundImage: AssetImage(widget.userData.imagepath),
           ),
           SizedBox(
             width: 15,
@@ -60,20 +67,20 @@ class MessageTab extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Text(firstName,
+                  Text(widget.userData.firstname,
                       style: TextStyle(
                           fontSize: 20,
                           fontFamily: 'Nunito',
                           fontWeight: FontWeight.bold)),
                   SizedBox(width: 17),
-                  Text(profession,
+                  Text(widget.userData.profession,
                       style: TextStyle(
                           fontSize: 13,
                           color: Color.fromRGBO(169, 176, 182, 1),
                           fontFamily: 'Nunito')),
                 ],
               ),
-              Text(lastMsg,
+              Text(widget.messages.last.content,
                   style: TextStyle(
                       fontSize: 14,
                       color: Color.fromRGBO(85, 99, 110, 1),
@@ -145,7 +152,11 @@ class _MessageViewState extends State<MessageView> {
                           return Text(""); // Need to find a better way to overcome this delay (why is there always a delay???)
                         }
                         else {
-                          return MessageTab(userDataSnapshot.data, messages);
+                          return MessageTab(
+                            myUid: widget.currentUserUid, 
+                            userData: userDataSnapshot.data, 
+                            messages: messages
+                          );
                         }
                       });
                 });

@@ -1,6 +1,7 @@
+import 'package:Spark/models/userData.dart';
 import 'package:flutter/material.dart';
 import 'package:Spark/shared/appbar.dart';
-import 'package:Spark/shared/profile.dart';
+import 'package:Spark/screens/profile.dart';
 
 class DiscoverView extends StatelessWidget {
   buildButton(String imagePath) {
@@ -25,6 +26,8 @@ class DiscoverView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //TODO: This UserProfile needs to be generated randomly from the DiscoveryEngine
+    UserData tempUserData = UserData(imagepath: "images/mawra.jpg", uid: "temp_uid", firstname: "Mawra", age: 27, profession: "Actress");
     return Scaffold(
       appBar: buildDiscoverAppBar(),
       body: Container(
@@ -32,7 +35,7 @@ class DiscoverView extends StatelessWidget {
         padding: const EdgeInsets.all(5),
         child:
             Stack(alignment: AlignmentDirectional.bottomEnd, children: <Widget>[
-          Profile(),
+          Profile(tempUserData),
           Positioned(
             bottom: 54,
             left: 260,

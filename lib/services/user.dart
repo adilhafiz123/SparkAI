@@ -19,7 +19,7 @@ class UserService {
         lastname: doc.data["last_name"] ?? "",
         age: doc.data["age"] ?? 0,
         profession: doc.data["profession"] ?? "",
-        imagepath: doc.data["image_path"] ?? "images/mawra.jpg",
+        imagepath: doc.data["image_path"] ?? "images/mawra.jpg",//TODO: This should be some generic default avater
       );
     });
   }

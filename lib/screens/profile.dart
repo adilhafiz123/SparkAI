@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:Spark/models/userData.dart';
 
 class Profile extends StatefulWidget {
+  final UserData userData;
 
+  Profile(this.userData);
 
   @override
   _ProfileState createState() => _ProfileState();
@@ -81,8 +84,8 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     return ListView(
         children: <Widget>[
-          buildDiscoverPhoto("images/mawra.jpg"),
-          buildProfileText("Mawra", 27),
+          buildDiscoverPhoto(widget.userData.imagepath),
+          buildProfileText(widget.userData.firstname, widget.userData.age),
         ],
       );
   }

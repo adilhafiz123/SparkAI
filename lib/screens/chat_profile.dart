@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:Spark/screens/chat.dart';
-import 'package:Spark/shared/profile.dart';
+import 'package:Spark/screens/profile.dart';
 import 'package:Spark/shared/appbar.dart';
 import 'package:Spark/models/userData.dart';
 
@@ -26,7 +26,7 @@ class _ChatProfileState extends State<ChatProfile> {
         body: TabBarView(
           children: <Widget>[
             ChatView(myUid: widget.myUid, theirUid: widget.userData.uid, messages: widget.messages), 
-            Profile()
+            Profile(widget.userData)
             ],
         ),
       ),

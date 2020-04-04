@@ -3,41 +3,40 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker/emoji_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:Spark/models/chat.dart';
+import 'package:Spark/models/user.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
+import 'package:provider/provider.dart';
 
 class ChatView extends StatefulWidget {
-  final myUid;
   final theirUid;
   final image;
   final name;
-  final messages;
+  //final messages;
 
-  ChatView({this.myUid, this.theirUid, this.image, this.name, this.messages});
+  ChatView({this.theirUid, this.image, this.name});//, this.messages});
 
   @override
-  _ChatViewState createState() => _ChatViewState(messages);
+  _ChatViewState createState() => _ChatViewState();
 }
 
 class _ChatViewState extends State<ChatView> {
+  var _myUid;
+  List<Chat> _chatList;
+  Chat _chat;
   var _scrollController = ScrollController();
   var _inputText = "";
   var _textController = TextEditingController();
-  List<Message> _messages;
   bool _showEmojiKeyboard = false;
   FocusNode _textFieldFocusNode;
-
-  _ChatViewState(List<Message> messages) {
-    _messages = messages;
-  }
+  
   @override
   void initState() {
     super.initState();
 
     _textFieldFocusNode = FocusNode();
-    _textFieldFocusNode.addListener( () {
-      
-    }
-    );
+    _textFieldFocusNode.addListener(() {});
+
   }
 
   @override
@@ -57,22 +56,22 @@ class _ChatViewState extends State<ChatView> {
 
   _buildEmojiPicker() {
     return Container(
-        height: _showEmojiKeyboard ? 285 : 0,
-        //color: Colors.red,
-        child: EmojiPicker(
-          bgColor: Colors.transparent,
-          rows: 4,
-          columns: 8,
-          buttonMode: ButtonMode.MATERIAL,
-          indicatorColor: Color.fromRGBO(1, 170, 185, 1),
-          noRecentsStyle: TextStyle(fontFamily: "Nunito", fontSize: 30),
-          //recommendKeywords: ["laugh"],
-          //numRecommended: 10,
-          onEmojiSelected: (emoji, category) {
-            _textController.text += emoji.emoji;
-          },
-        ),
-      );
+      height: _showEmojiKeyboard ? 285 : 0,
+      //color: Colors.red,
+      child: EmojiPicker(
+        bgColor: Colors.transparent,
+        rows: 4,
+        columns: 8,
+        buttonMode: ButtonMode.MATERIAL,
+        indicatorColor: Color.fromRGBO(1, 170, 185, 1),
+        noRecentsStyle: TextStyle(fontFamily: "Nunito", fontSize: 30),
+        //recommendKeywords: ["laugh"],
+        //numRecommended: 10,
+        onEmojiSelected: (emoji, category) {
+          _textController.text += emoji.emoji;
+        },
+      ),
+    );
   }
 
   _buildMessageComposer(BuildContext _context, TextEditingController _textController) {
@@ -81,21 +80,25 @@ class _ChatViewState extends State<ChatView> {
         height: 60,
         child: Row(children: <Widget>[
           GestureDetector(
-              child: _showEmojiKeyboard ? 
-              GestureDetector(child:Icon(Icons.keyboard, size: 30,color: Colors.grey,))
-              : Image.asset(
-                "icons/smile.png",
-                height: 30,
-                color: Colors.grey,
-              ),
+              child: _showEmojiKeyboard
+                  ? GestureDetector(
+                      child: Icon(
+                      Icons.keyboard,
+                      size: 30,
+                      color: Colors.grey,
+                    ))
+                  : Image.asset(
+                      "icons/smile.png",
+                      height: 30,
+                      color: Colors.grey,
+                    ),
               onTap: () {
                 setState(() {
                   _showEmojiKeyboard = !_showEmojiKeyboard;
                 });
-                if(_showEmojiKeyboard) { 
+                if (_showEmojiKeyboard) {
                   FocusScope.of(context).unfocus(); //Hide Keyboard
-                }
-                else {
+                } else {
                   _textFieldFocusNode.requestFocus();
                 }
               }),
@@ -143,10 +146,10 @@ class _ChatViewState extends State<ChatView> {
                 onTap: () {
                   setState(() {
                     _showEmojiKeyboard = false;
-                    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+                    _scrollController
+                        .jumpTo(_scrollController.position.maxScrollExtent);
                   });
-                }
-                ),
+                }),
           )),
           ButtonTheme(
             minWidth: 10,
@@ -162,29 +165,24 @@ class _ChatViewState extends State<ChatView> {
               elevation: 1,
               padding:
                   EdgeInsets.only(left: 17, right: 14, top: 14, bottom: 14),
-              shape: CircleBorder(),
+              shape: CircleBorder(),              
               onPressed: () {
                 String cleanedText = _cleanText(_inputText);
                 if (cleanedText.isNotEmpty) {
                   var message = Message(
                       content: cleanedText,
                       createdAt: Timestamp.now(),
-                      uid: widget.myUid);
+                      userUid: _myUid);
                   setState(() {
-                    _messages.add(message);
-                    if (_scrollController.position.maxScrollExtent < 10000) {
-                      _scrollController.animateTo(
-                          _scrollController.position.maxScrollExtent,
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.ease);
-                    } else {
-                      _scrollController
-                          .jumpTo(_scrollController.position.maxScrollExtent);
-                    }
+                    _chat.messages.add(message);
+                    
                   });
-                  ChatsService(myUid: widget.myUid)
+                  ChatsService(myUid: _myUid)
                       .createMessage(widget.theirUid, message);
+                  
+                  _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
                   _textController.clear();
+                  _inputText = "";
                 }
               },
             ),
@@ -192,81 +190,152 @@ class _ChatViewState extends State<ChatView> {
         ]));
   }
 
-  _buildMessage({String text, bool isMe}) {
+  _buildAlertDialog(context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15))),
+      title: Text(
+        "Delete Message?",
+        style: TextStyle(
+          fontFamily: "Nunito",
+          fontSize: 24,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      actions: <Widget>[
+        FlatButton(
+            child: Text(
+              "Cancel",
+              style: TextStyle(
+                fontFamily: "Nunito",
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Color.fromRGBO(1, 170, 185, 1),
+              ),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            }),
+        FlatButton(
+            child: Text(
+              "Delete",
+              style: TextStyle(
+                fontFamily: "Nunito",
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Color.fromRGBO(1, 170, 185, 1),
+              ),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            }),
+      ],
+    );
+  }
+
+  _buildMessage(Message message) {
+    String text = message.content;
+    bool isMe = message.userUid == _myUid;
     bool hasEmoji = EmojiParser().hasEmoji(text);
+
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: isMe
-            ? EdgeInsets.only(top: 3, bottom: 3)
-            : EdgeInsets.only(top: 4, bottom: 4),
-        child: Material(
-          elevation: hasEmoji ? 0 : 1,
-          borderRadius: isMe
-              ? BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                  bottomLeft: Radius.circular(20))
-              : BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-          color: hasEmoji 
-              ? Colors.transparent
-              : isMe
-                ? Color.fromRGBO(1, 170, 185, 1)
-                : Color.fromRGBO(240, 244, 253, 1),
-          child: Container(
-            child: Text(
-              text,
-              style: TextStyle(
-                  color: isMe ? Colors.white : Colors.black,
-                  fontFamily: "Nunito",
-                  fontSize: hasEmoji ? 35 : 15,
-                  fontWeight: FontWeight.w500),
+      child: GestureDetector(
+        child: Container(
+          margin: isMe
+              ? EdgeInsets.only(top: 3, bottom: 3)
+              : EdgeInsets.only(top: 4, bottom: 4),
+          child: Material(
+            elevation: hasEmoji ? 0 : 1,
+            borderRadius: isMe
+                ? BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(20))
+                : BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
+            color: hasEmoji
+                ? Colors.transparent
+                : isMe
+                    ? Color.fromRGBO(1, 170, 185, 1)
+                    : Color.fromRGBO(240, 244, 253, 1),
+            child: Container(
+              child: Text(
+                text,
+                style: TextStyle(
+                    color: isMe ? Colors.white : Colors.black,
+                    fontFamily: "Nunito",
+                    fontSize: hasEmoji ? 35 : 15,
+                    fontWeight: FontWeight.w500),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           ),
         ),
+        onLongPress: () async {
+          HapticFeedback.mediumImpact();
+          await showDialog<bool>(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => _buildAlertDialog(context),
+          ).then<bool>((shouldDelete) {
+            HapticFeedback.heavyImpact();
+            if (shouldDelete) {
+              setState(() {
+                ChatsService().deleteMessage(message);
+                _chat.messages.removeWhere((msg) => msg == message);
+              });
+            }
+          });
+        },
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+
+    _myUid = Provider.of<User>(context).uid;
+    _chatList = Provider.of<List<Chat>>(context);
+    if (_chatList == null || _chatList.length == 0) {
+      _chat = Chat("", "", 0, List());
+    }
+    else {
+    _chat = _chatList[0];
+    }
+
     return Scaffold(
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 14, right: 14),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    shrinkWrap: true,
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      var msgUid = _messages[index].uid;
-                      return _buildMessage(
-                          text: _messages[index].content,
-                          isMe: msgUid == widget.myUid);
-                    },
+        body: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 14, right: 14),
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      shrinkWrap: true,
+                      itemCount: _chat.messages.length,
+                      itemBuilder: (context, index) {
+                        return _buildMessage(_chat.messages[index]);
+                      },
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              _buildMessageComposer(context, _textController),
-              _buildEmojiPicker(),
-            ],
+                SizedBox(
+                  height: 8,
+                ),
+                _buildMessageComposer(context, _textController),
+                _buildEmojiPicker(),
+              ],
+            ),
           ),
         ),
-      ),
     );
   }
 }

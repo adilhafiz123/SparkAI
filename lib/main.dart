@@ -1,10 +1,12 @@
+import 'package:Spark/models/chat.dart';
+import 'package:Spark/screens/chat_profile.dart';
+import 'package:Spark/services/chats.dart';
 import 'package:flutter/material.dart';
 import 'package:Spark/models/user.dart';
 import 'package:Spark/screens/messages.dart';
 import 'package:Spark/screens/wrapper.dart';
 import 'package:Spark/services/auth.dart';
 import 'package:provider/provider.dart';
-import './screens/home.dart';
 
 void main() => runApp(new Spark());
 
@@ -16,12 +18,16 @@ class Spark extends StatefulWidget {
 class _SparkState extends State<Spark> {
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<User>.value(
-      value: AuthService().user,
+    return StreamProvider<User>(
+      create: (context) => AuthService().user,
       child: MaterialApp(
-          title: "Spark!",
-          debugShowCheckedModeBanner: false,
-          home: Wrapper()),
+        title: "Spark!",
+        debugShowCheckedModeBanner: false,
+        home: Wrapper(),
+        routes: {
+          "/chat_profile": (context) => ChatProfile(),
+        },
+      ),
     );
   }
 }

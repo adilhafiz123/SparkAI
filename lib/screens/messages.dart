@@ -1,38 +1,29 @@
-import 'package:Spark/services/chats.dart';
+import 'package:Spark/models/user.dart';
 import 'package:Spark/shared/loading.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Spark/models/chat.dart';
 import 'package:Spark/screens/chat_profile.dart';
 import 'package:Spark/shared/appbar.dart';
 import 'package:Spark/services/user.dart';
 import 'package:Spark/models/userData.dart';
+import 'package:provider/provider.dart';
 
 class MessageTab extends StatefulWidget {
-  final myUid;
   final userData;
   final messages; //TODO: Prob not a good idea to have two copies of this in memory!
 
-  MessageTab({ this.myUid, this.userData, this.messages });
+  MessageTab({this.userData, this.messages});
 
   @override
   _MessageTabState createState() => _MessageTabState();
 }
 
 class _MessageTabState extends State<MessageTab> {
-  // String myUid;
-  // UserData userData;
-  // List<Message> messages = [];
-
-  // _MessageTabState(myUid, userData, messages) {
-  //   myUid      = myUid;
-  //   userData   = userData;
-  //   messages   = messages;
-  // }
-
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterial(context));
+    int messageCount = List.of(widget.messages).length;
+
     return InkWell(
       highlightColor: Colors.red[200].withOpacity(0.1),
       enableFeedback: true,
@@ -40,12 +31,11 @@ class _MessageTabState extends State<MessageTab> {
       onTap: () {
         Navigator.push(
             context,
-            MaterialPageRoute(
+            MaterialPageRoute<void>(
                 builder: (_) => ChatProfile(
-                      myUid: widget.myUid,
                       userData: widget.userData,
                       messages: widget.messages,
-                    ))); 
+                    )));
       },
       child: Container(
         padding: const EdgeInsets.only(bottom: 8, top: 8),
@@ -54,10 +44,16 @@ class _MessageTabState extends State<MessageTab> {
                 bottom: BorderSide(width: 0.5, color: Colors.grey[300]))),
         child: Row(children: <Widget>[
           SizedBox(width: 16),
-          CircleAvatar(
-            radius: 34,
-            backgroundImage: AssetImage(widget.userData.imagepath),
+          // Hero(
+          //   tag: "Avatar",
+          /*child:*/ GestureDetector(
+            onTap: () => Navigator.of(context).pushNamed("/chat_profile"), //Navigator.of(context).push(MaterialPageRoute<void>(builder: (context) => ChatProfile())),
+            child: CircleAvatar(
+              radius: 34,
+              backgroundImage: AssetImage(widget.userData.imagepath),
+            ),
           ),
+          //),
           SizedBox(
             width: 15,
           ),
@@ -80,7 +76,10 @@ class _MessageTabState extends State<MessageTab> {
                           fontFamily: 'Nunito')),
                 ],
               ),
-              Text(widget.messages.last.content,
+              Text(
+                  messageCount > 0
+                      ? widget.messages.last.content
+                      : "", //TODO: Some sensible default msg
                   style: TextStyle(
                       fontSize: 14,
                       color: Color.fromRGBO(85, 99, 110, 1),
@@ -97,14 +96,12 @@ class _MessageTabState extends State<MessageTab> {
           )
         ]),
       ),
+      //),
     );
   }
 }
 
 class MessageView extends StatefulWidget {
-  final String currentUserUid;
-  
-  const MessageView({Key key, this.currentUserUid}): super(key: key);
 
   @override
   _MessageViewState createState() => _MessageViewState();
@@ -112,57 +109,38 @@ class MessageView extends StatefulWidget {
 
 class _MessageViewState extends State<MessageView> {
 
-  List<Message> chatFromMap(List<dynamic> chatData) {
-    return chatData.map( (map) { 
-      return Message(
-        content: map["content"] ?? "",
-        createdAt: map["created_at"] ?? Timestamp.now(),
-        uid: map["uid"] ?? "",
-        );
-    }).toList();
-  }
-
-
   @override
   Widget build(BuildContext context) {
+    final myUid = Provider.of<User>(context).uid;
+    List<Chat> uid1Chats = Provider.of<List<Uid1Chat>>(context).map<Chat>((Uid1Chat chat) {
+      return Chat(chat.uid1, chat.uid2, chat.count, chat.messages);
+    }).toList();
+    List<Chat> uid2Chats = Provider.of<List<Uid2Chat>>(context).map<Chat>((Uid2Chat chat) {
+      return Chat(chat.uid1, chat.uid2, chat.count, chat.messages);
+    }).toList();
+    List<Chat> chats = uid1Chats + uid2Chats;
 
-        return Scaffold(
-        appBar: buildMessagesAppBar(),
-        body: FutureBuilder<QuerySnapshot>(
-          future: ChatsService(myUid: widget.currentUserUid).getUsersChats(),
-          builder: (_, chatSnapshot) {
-            if (chatSnapshot.connectionState == ConnectionState.waiting) {
-              return Loading();
-            }
-            else {
-              return ListView.builder(
-                itemCount: chatSnapshot.data.documents.length,
-                itemBuilder: (_, index) {
-                    var chatData = chatSnapshot.data.documents[index].data;
-                    var uid1 = chatData["uid1"] ?? "";
-                    var uid2 = chatData["uid2"] ?? "";
-                    List<Message> messages = [];
-                    if (chatData["messages"] != null) {
-                      messages = chatFromMap(chatData["messages"]);
-                    }
-                    return FutureBuilder<UserData>(
-                      future: UserService(uid: uid1).getUserDocFutureFromUid(uid2),
-                      builder: (_, userDataSnapshot) {
-                        if (userDataSnapshot.connectionState == ConnectionState.waiting) {
-                          return Text(""); // Need to find a better way to overcome this delay (why is there always a delay???)
-                        }
-                        else {
-                          return MessageTab(
-                            myUid: widget.currentUserUid, 
-                            userData: userDataSnapshot.data, 
-                            messages: messages
-                          );
-                        }
-                      });
+    return Scaffold(
+      appBar: buildMessagesAppBar(),
+      body: ListView.builder(
+          itemCount: chats.length,
+          itemBuilder: (_, index) {
+            var chat = chats[index];
+            var theirUid = chat.uid1 == myUid ? chat.uid2 : chat.uid1;
+            
+            return FutureBuilder<UserData>(
+                future: UserService(uid: myUid).getUserDocFutureFromUid(theirUid),
+                builder: (_, userDataSnapshot) {
+                  if (userDataSnapshot.connectionState == ConnectionState.waiting) {
+                    return Loading();
+                  } 
+                  else {
+                    return MessageTab(
+                        userData: userDataSnapshot.data,
+                        messages: chat.messages);
+                  }
                 });
-            }
-          })
-        );
-      }
-                    
+          }),
+    );
+  }
 }

@@ -1,3 +1,6 @@
+import 'package:Spark/models/chat.dart';
+import 'package:Spark/services/auth.dart';
+import 'package:Spark/services/chats.dart';
 import 'package:flutter/material.dart';
 import 'package:Spark/models/user.dart';
 import 'package:Spark/screens/authenticate/authenticate.dart';
@@ -10,8 +13,9 @@ class Wrapper extends StatelessWidget {
     final user = Provider.of<User>(context);
     if (user == null) {
       return Authenticate();
-    } else {
-      return Home(currentUserUid: user.uid);
+    }
+    else {
+      return Home();
     }
   }
 }

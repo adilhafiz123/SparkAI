@@ -12,7 +12,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
 
-  buildDiscoverPhoto(String photoPath) {
+  Widget buildDiscoverPhoto(String photoPath) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Image.asset(
@@ -23,7 +23,7 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  buildChip(String label, IconData iconData, Color color) {
+  Widget buildChip(String label, IconData iconData, Color color) {
     return Chip(
       elevation: 3,
       shadowColor: color,
@@ -40,7 +40,7 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  buildProfileText(String name, int age) {
+  Widget buildProfileText(String name, int age) {
     return Container(
       //color: Colors.blueGrey[100],
       child: Column(children: <Widget>[
@@ -83,8 +83,11 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-        children: <Widget>[
-          buildDiscoverPhoto(widget.userData.imagepath),
+          children: <Widget>[
+        //   Hero(
+        //     tag: "Avatar",
+            /*child:*/ buildDiscoverPhoto(widget.userData.imagepath),
+          // ),
           buildProfileText(widget.userData.firstname, widget.userData.age),
         ],
       );

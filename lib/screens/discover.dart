@@ -4,10 +4,10 @@ import 'package:Spark/shared/appbar.dart';
 import 'package:Spark/screens/profile.dart';
 
 class DiscoverView extends StatelessWidget {
+  
   buildButton(String imagePath) {
     return Container(
       height: 70,
-      //constraints: BoxConstraints.expand(height: 20),
       child: RaisedButton(
         elevation: 10,
         color: Colors.white,

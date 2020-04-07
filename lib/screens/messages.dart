@@ -44,13 +44,11 @@ class _MessageTabState extends State<MessageTab> {
                 bottom: BorderSide(width: 0.5, color: Colors.grey[300]))),
         child: Row(children: <Widget>[
           SizedBox(width: 16),
-          // Hero(
-          //   tag: "Avatar",
-          /*child:*/ GestureDetector(
-            onTap: () => Navigator.of(context).pushNamed("/chat_profile"), //Navigator.of(context).push(MaterialPageRoute<void>(builder: (context) => ChatProfile())),
+          GestureDetector(
+            //onTap: () => Navigator.of(context)push(Profile()), //Navigator.of(context).push(MaterialPageRoute<void>(builder: (context) => ChatProfile())),
             child: CircleAvatar(
-              radius: 34,
-              backgroundImage: AssetImage(widget.userData.imagepath),
+                radius: 34,
+                backgroundImage: AssetImage(widget.userData.imagepath),
             ),
           ),
           //),
@@ -102,20 +100,20 @@ class _MessageTabState extends State<MessageTab> {
 }
 
 class MessageView extends StatefulWidget {
-
   @override
   _MessageViewState createState() => _MessageViewState();
 }
 
 class _MessageViewState extends State<MessageView> {
-
   @override
   Widget build(BuildContext context) {
     final myUid = Provider.of<User>(context).uid;
-    List<Chat> uid1Chats = Provider.of<List<Uid1Chat>>(context).map<Chat>((Uid1Chat chat) {
+    List<Chat> uid1Chats =
+        Provider.of<List<Uid1Chat>>(context).map<Chat>((Uid1Chat chat) {
       return Chat(chat.uid1, chat.uid2, chat.count, chat.messages);
     }).toList();
-    List<Chat> uid2Chats = Provider.of<List<Uid2Chat>>(context).map<Chat>((Uid2Chat chat) {
+    List<Chat> uid2Chats =
+        Provider.of<List<Uid2Chat>>(context).map<Chat>((Uid2Chat chat) {
       return Chat(chat.uid1, chat.uid2, chat.count, chat.messages);
     }).toList();
     List<Chat> chats = uid1Chats + uid2Chats;
@@ -127,14 +125,15 @@ class _MessageViewState extends State<MessageView> {
           itemBuilder: (_, index) {
             var chat = chats[index];
             var theirUid = chat.uid1 == myUid ? chat.uid2 : chat.uid1;
-            
+
             return FutureBuilder<UserData>(
-                future: UserService(uid: myUid).getUserDocFutureFromUid(theirUid),
+                future:
+                    UserService(uid: myUid).getUserDocFutureFromUid(theirUid),
                 builder: (_, userDataSnapshot) {
-                  if (userDataSnapshot.connectionState == ConnectionState.waiting) {
+                  if (userDataSnapshot.connectionState ==
+                      ConnectionState.waiting) {
                     return Loading();
-                  } 
-                  else {
+                  } else {
                     return MessageTab(
                         userData: userDataSnapshot.data,
                         messages: chat.messages);

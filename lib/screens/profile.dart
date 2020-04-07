@@ -11,45 +11,26 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-
-  Widget buildDiscoverPhoto(String photoPath) {
+  Widget buildPhoto() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Image.asset(
-        photoPath,
+        widget.userData.imagepath,
         height: 420,
         fit: BoxFit.cover,
       ),
     );
   }
 
-  Widget buildChip(String label, IconData iconData, Color color) {
-    return Chip(
-      elevation: 3,
-      shadowColor: color,
-      label: Text(label,
-          style: TextStyle(
-              fontSize: 14, fontFamily: "Nunito", fontWeight: FontWeight.w600,color: Colors.white)),
-      avatar: Icon(
-        iconData,
-        size: 18,
-        color: Colors.white,
-      ),
-      backgroundColor: color,
-      padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-    );
-  }
-
-  Widget buildProfileText(String name, int age) {
-    return Container(
-      //color: Colors.blueGrey[100],
-      child: Column(children: <Widget>[
+  Widget buildIntro() {
+    return Column(
+      children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(name + ", ",
+            Text(widget.userData.firstname + ", ",
                 style: TextStyle(fontSize: 35, fontFamily: "vidaloka")),
-            Text(age.toString(),
+            Text(widget.userData.age.toString(),
                 style: TextStyle(
                     fontSize: 35,
                     fontFamily: "vidaloka",
@@ -58,38 +39,126 @@ class _ProfileState extends State<Profile> {
         ),
         Text("24 miles away, Slough",
             style: TextStyle(
-                fontSize: 15, fontFamily: "Nunito", fontWeight: FontWeight.w800)),
-        Wrap(
-          spacing: 10,
-          alignment: WrapAlignment.center,
-          children: <Widget>[
-            buildChip("Actress", Icons.work, Colors.teal),
-            buildChip("Pakistani", Icons.flag, Color.fromARGB(255, 245, 183, 1)),
-            buildChip("United Kingdom", Icons.flag, Colors.blue[800]),
-          ],
+                fontSize: 15,
+                fontFamily: "Nunito",
+                fontWeight: FontWeight.w800)),
+        SizedBox(
+          height: 10,
         ),
-        SizedBox(height: 14,),
+      ],
+    );
+  }
+
+  Widget buildChip(String label, String imagePath, Color backColor, Color textColor) {
+    return Chip(
+      elevation: 3,
+      //shadowColor: backColor,
+      label: Padding(
+        padding: const EdgeInsets.only(left:0, right:0, top:3, bottom:3),
+        child: Text(label,
+            style: TextStyle(
+                fontSize: 14,
+                fontFamily: "Nunito",
+                fontWeight: FontWeight.w700,
+                color: textColor)),
+      ),
+      avatar: Padding(
+        padding: const EdgeInsets.only(left:1, right:0, top:3, bottom:3),
+        child: Image.asset(imagePath),
+      ),
+      backgroundColor: backColor,
+      padding: EdgeInsets.only(left: 7, right: 8, top: 1, bottom: 1),
+    );
+  }
+
+  Widget buildBasicsChipCollection() {
+    var textColor = Colors.white;
+    var backColor = Color.fromRGBO(1, 170, 185, 1);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Wrap(
+        spacing: 10,
+        alignment: WrapAlignment.center,
+        children: <Widget>[
+          buildChip(widget.userData.profession, "icons/laptop.png", backColor, textColor),
+          buildChip("5' 11\"", "icons/double-arrow.png", backColor, textColor),
+          buildChip("Pakistani", "icons/pakistan.png", backColor, textColor),
+          buildChip("Urdu", "icons/language.png", backColor, textColor),
+        ],
+      ),
+    );
+  }
+
+  Widget buildReligionChipCollection() {
+    var textColor = Color.fromRGBO(0, 19, 91, 1);
+    var backColor = Color.fromRGBO(255, 202, 0, 1);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Wrap(
+        spacing: 10,
+        alignment: WrapAlignment.center,
+        children: <Widget>[
+          buildChip("Sunni", "icons/islam.png", backColor, textColor),
+          buildChip("Practising", "icons/beads.png", backColor, textColor),
+          buildChip("Hijab", "icons/hijab.png", backColor, textColor),
+          buildChip("Usually", "icons/pray2.png", backColor, textColor),
+          buildChip("Always", "icons/halal.png", backColor, textColor),
+          buildChip("Never", "icons/wine.png", backColor, textColor),
+          buildChip("Never", "icons/smoke.png", backColor, textColor),
+        ],
+      ),
+    );
+  }
+
+  Widget buildHobbiesChipCollection() {
+    var textColor = Colors.black;
+    var backColor = Colors.white;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Wrap(
+        spacing: 10,
+        alignment: WrapAlignment.center,
+        children: <Widget>[
+          buildChip("Photography", "icons/camera.png", backColor, textColor),
+          buildChip("Exercise", "icons/gym.png", backColor, textColor),
+          buildChip("Cooking", "icons/cooking.png", backColor, textColor),
+          buildChip("Reading", "icons/book.png", backColor, textColor),
+        ],
+      ),
+    );
+  }
+
+
+  Widget buildProfileText() {
+    return Container(
+      child: Column(children: <Widget>[
         Container(
           padding: EdgeInsets.all(10),
-          child: Text("This is the main profile area, this is the main profile area, this is the main profile area, this is the main profile area,\n\n This is the main profile area, this is the main profile area, this is the main profile area, this is the main profile area, \n\n This is the main profile area, this is the main profile area, this is the main profile area, this is the main profile area,",
-          style: TextStyle(
-                  fontSize: 18, fontFamily: "Nunito", fontWeight: FontWeight.w700)),
+          child: Text(
+              "This is the main profile area, this is the main profile area, this is the main profile area, this is the main profile area,\n\n This is the main profile area, this is the main profile area, this is the main profile area, this is the main profile area, \n\n This is the main profile area, this is the main profile area, this is the main profile area, this is the main profile area,",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: "Nunito",
+                  fontWeight: FontWeight.w700)),
         ),
       ]),
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return ListView(
-          children: <Widget>[
-        //   Hero(
-        //     tag: "Avatar",
-            /*child:*/ buildDiscoverPhoto(widget.userData.imagepath),
-          // ),
-          buildProfileText(widget.userData.firstname, widget.userData.age),
-        ],
-      );
+      children: <Widget>[
+        buildPhoto(),
+        buildIntro(),
+        buildBasicsChipCollection(),
+        Divider(),
+        buildReligionChipCollection(),
+        Divider(),
+        buildHobbiesChipCollection(),
+        Divider(),
+        buildProfileText(),
+      ],
+    );
   }
 }

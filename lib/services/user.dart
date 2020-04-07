@@ -24,21 +24,6 @@ class UserService {
     });
   }
 
-  // DocumentSnapshot getChatDocFromUid(String uid) async {
-  //   var doc = await getUserDocFutureFromUid(uid);
-  //   return doc;
-  //   if (doc.exists) {
-  //     return UserData(
-  //       firstname:  doc.data["first_name"]        ?? "",
-  //       age:        doc.data["age"]         ?? 0,
-  //       profession: doc.data["profession"]  ?? "",
-  //       );
-  //   }
-  //   else {
-  //     return UserData(age: 0, firstname: "", profession: "");
-  //   }
-  // }
-
   Future updateCurrentUserData(String name, int age, String profession) async {
     return await userCollection
         .document(uid)

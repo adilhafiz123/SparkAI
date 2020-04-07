@@ -21,11 +21,13 @@ class _HomeState extends State<Home> {
 
     _tabs.add(DiscoverView());
     _tabs.add(MessageView());
+    _tabs.add(Center(child: Text("I AM THE SETTINGS SCREEN :)")));//TODO: Build a settings screen!
   }
 
   @override
   Widget build(BuildContext context) {
     final myUid = Provider.of<User>(context).uid;
+    TextStyle bnbStyle = TextStyle(fontFamily: "Nunito" , fontWeight: FontWeight.w700,);
     return MultiProvider(
       providers: [
         StreamProvider<List<Uid1Chat>>(create: (context) => ChatsService(myUid: myUid).getUID1Chats),
@@ -35,19 +37,22 @@ class _HomeState extends State<Home> {
           body: _tabs[_currentIndex],
           bottomNavigationBar: BottomNavigationBar(
               currentIndex: _currentIndex,
-              selectedItemColor: Color.fromRGBO(215, 2, 101, 1),
+              selectedItemColor: Color.fromRGBO(1, 170, 185, 1),
               items: [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.account_box),
-                  title: Text("Discover",
-                      style:
-                          TextStyle(fontFamily: "Nunito", color: Colors.black)),
+                  title: Text("Discover", style: bnbStyle),
                 ),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.chat),
                     title: Text("Messages",
-                        style: TextStyle(
-                            fontFamily: "Nunito", color: Colors.black)))
+                        style: bnbStyle)
+                        ),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.settings),
+                    title: Text("Settings",
+                        style: bnbStyle)
+                        )
               ],
               onTap: (index) {
                 setState(() => _currentIndex = index);

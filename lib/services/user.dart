@@ -1,3 +1,4 @@
+import 'package:Spark/shared/enums.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Spark/models/userData.dart';
 
@@ -14,12 +15,20 @@ class UserService {
         .get()
         .then<UserData>((DocumentSnapshot doc) {
       return UserData(
-        uid: doc.documentID,
-        firstname: doc.data["first_name"] ?? "",
-        lastname: doc.data["last_name"] ?? "",
-        age: doc.data["age"] ?? 0,
-        profession: doc.data["profession"] ?? "",
-        imagepath: doc.data["image_path"] ?? "images/mawra.jpg",//TODO: This should be some generic default avater
+        uid:              doc.documentID,
+        firstname:        doc.data["first_name"] ?? "",
+        lastname:         doc.data["last_name"] ?? "",
+        age:              doc.data["age"] ?? 0,
+        gender:           EnumHelper.GenderFromString(doc.data["gender"]),
+        profession:       doc.data["profession"] ?? "",
+        imagepath:        doc.data["image_path"] ?? "images/mawra.jpg",//TODO: This should be some generic default avater
+        sect:             EnumHelper.SectFromString(doc.data["sect"]),
+        religiousness:    EnumHelper.ReligiousnessFromString(doc.data["religiousness"]),
+        modesty:          EnumHelper.ModestyFromString(doc.data["modesty"]),
+        prayer:           EnumHelper.PrayerFromString(doc.data["prayer"]),
+        halal:            EnumHelper.HalalFromString(doc.data["halal"]),
+        drinks:           EnumHelper.DrinksFromString(doc.data["drinks"]),
+        smokes:           EnumHelper.SmokesFromString(doc.data["smokes"]),
       );
     });
   }
@@ -33,9 +42,20 @@ class UserService {
   List<UserData> _userDataListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
       return UserData(
-        firstname: doc.data["first_name"] ?? "",
-        age: doc.data["age"] ?? 0,
-        profession: doc.data["profession"] ?? "",
+        uid:              doc.documentID,
+        firstname:        doc.data["first_name"] ?? "",
+        lastname:         doc.data["last_name"] ?? "",
+        age:              doc.data["age"] ?? 0,
+        gender:           EnumHelper.GenderFromString(doc.data["gender"]),
+        profession:       doc.data["profession"] ?? "",
+        imagepath:        doc.data["image_path"] ?? "images/mawra.jpg",//TODO: This should be some generic default avater
+        sect:             EnumHelper.SectFromString(doc.data["sect"]),
+        religiousness:    EnumHelper.ReligiousnessFromString(doc.data["religiousness"]),
+        modesty:          EnumHelper.ModestyFromString(doc.data["modesty"]),
+        prayer:           EnumHelper.PrayerFromString(doc.data["prayer"]),
+        halal:            EnumHelper.HalalFromString(doc.data["halal"]),
+        drinks:           EnumHelper.DrinksFromString(doc.data["drinks"]),
+        smokes:           EnumHelper.SmokesFromString(doc.data["smokes"]),
       );
     }).toList();
   }

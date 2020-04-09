@@ -63,4 +63,14 @@ class UserService {
   Stream<List<UserData>> get userStream {
     return userCollection.snapshots().map(_userDataListFromSnapshot);
   }
+
+  Future<List<String>> getHobbies(String uid) {
+    return userCollection
+        .document(uid)
+        .get()
+        .then<List<String>>((DocumentSnapshot doc) {
+      return List<String>.from(doc.data["hobbies"]);
+    });
+  }
+
 }

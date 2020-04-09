@@ -65,6 +65,27 @@ Widget buildMessagesAppBar() {
   );
 }
 
+Widget buildHobbiesAppBar() {
+  return AppBar(
+    elevation: 0,
+    iconTheme: IconThemeData(color: Colors.grey),
+    titleSpacing: 60,
+    title: Text(
+      "Hobbies",
+      style: TextStyle(
+        color: Colors.grey[700],
+        fontFamily: "vidaloka",
+        fontSize: 28,
+      ),
+    ),
+    backgroundColor: Colors.white,
+    // leading: Image(
+    //   image: AssetImage("images/sparks.png"),
+    //   color: Colors.grey,
+    // ),
+  );
+}
+
 Widget buildChatProfileAppBar(String name, String imagePath) {
   return AppBar(
     elevation: 0,

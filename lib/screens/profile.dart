@@ -12,12 +12,15 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   Widget buildPhoto() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Image.asset(
-        widget.userData.imagepath,
-        height: 420,
-        fit: BoxFit.cover,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Image.asset(
+          widget.userData.imagepath,
+          height: 420,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -119,7 +122,7 @@ class _ProfileState extends State<Profile> {
         spacing: 10,
         alignment: WrapAlignment.center,
         children: <Widget>[
-          buildChip("Photography", "icons/camera.png", backColor, textColor),
+          buildChip("Photography", "icons/photography.png", backColor, textColor),
           buildChip("Exercise", "icons/gym.png", backColor, textColor),
           buildChip("Cooking", "icons/cooking.png", backColor, textColor),
           buildChip("Reading", "icons/book.png", backColor, textColor),

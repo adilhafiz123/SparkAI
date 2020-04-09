@@ -1,3 +1,4 @@
+import 'package:Spark/screens/settings.dart';
 import 'package:Spark/services/chats.dart';
 import 'package:flutter/material.dart';
 import 'package:Spark/models/user.dart';
@@ -21,7 +22,7 @@ class _HomeState extends State<Home> {
 
     _tabs.add(DiscoverView());
     _tabs.add(MessageView());
-    _tabs.add(Center(child: Text("I AM THE SETTINGS SCREEN :)")));//TODO: Build a settings screen!
+    _tabs.add(Settings());
   }
 
   @override

@@ -15,20 +15,22 @@ class UserService {
         .get()
         .then<UserData>((DocumentSnapshot doc) {
       return UserData(
-        uid:              doc.documentID,
-        firstname:        doc.data["first_name"] ?? "",
-        lastname:         doc.data["last_name"] ?? "",
-        age:              doc.data["age"] ?? 0,
-        gender:           EnumHelper.GenderFromString(doc.data["gender"]),
-        profession:       doc.data["profession"] ?? "",
-        imagepath:        doc.data["image_path"] ?? "images/mawra.jpg",//TODO: This should be some generic default avater
-        sect:             EnumHelper.SectFromString(doc.data["sect"]),
-        religiousness:    EnumHelper.ReligiousnessFromString(doc.data["religiousness"]),
-        modesty:          EnumHelper.ModestyFromString(doc.data["modesty"]),
-        prayer:           EnumHelper.PrayerFromString(doc.data["prayer"]),
-        halal:            EnumHelper.HalalFromString(doc.data["halal"]),
-        drinks:           EnumHelper.DrinksFromString(doc.data["drinks"]),
-        smokes:           EnumHelper.SmokesFromString(doc.data["smokes"]),
+        uid: doc.documentID,
+        firstname: doc.data["first_name"] ?? "",
+        lastname: doc.data["last_name"] ?? "",
+        age: doc.data["age"] ?? 0,
+        gender: EnumHelper.GenderFromString(doc.data["gender"]),
+        profession: doc.data["profession"] ?? "",
+        imagepath: doc.data["image_path"] ??
+            "images/mawra.jpg", //TODO: This should be some generic default avater
+        sect: EnumHelper.SectFromString(doc.data["sect"]),
+        religiousness:
+            EnumHelper.ReligiousnessFromString(doc.data["religiousness"]),
+        modesty: EnumHelper.ModestyFromString(doc.data["modesty"]),
+        prayer: EnumHelper.PrayerFromString(doc.data["prayer"]),
+        halal: EnumHelper.HalalFromString(doc.data["halal"]),
+        drinks: EnumHelper.DrinksFromString(doc.data["drinks"]),
+        smokes: EnumHelper.SmokesFromString(doc.data["smokes"]),
       );
     });
   }
@@ -36,26 +38,28 @@ class UserService {
   Future updateCurrentUserData(String name, int age, String profession) async {
     return await userCollection
         .document(uid)
-        .setData({"first_name": name, "age": age, "profession": profession});
+        .updateData({"first_name": name, "age": age, "profession": profession});//TODO: THIS NEEDS TO BE UPDATED
   }
 
   List<UserData> _userDataListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
       return UserData(
-        uid:              doc.documentID,
-        firstname:        doc.data["first_name"] ?? "",
-        lastname:         doc.data["last_name"] ?? "",
-        age:              doc.data["age"] ?? 0,
-        gender:           EnumHelper.GenderFromString(doc.data["gender"]),
-        profession:       doc.data["profession"] ?? "",
-        imagepath:        doc.data["image_path"] ?? "images/mawra.jpg",//TODO: This should be some generic default avater
-        sect:             EnumHelper.SectFromString(doc.data["sect"]),
-        religiousness:    EnumHelper.ReligiousnessFromString(doc.data["religiousness"]),
-        modesty:          EnumHelper.ModestyFromString(doc.data["modesty"]),
-        prayer:           EnumHelper.PrayerFromString(doc.data["prayer"]),
-        halal:            EnumHelper.HalalFromString(doc.data["halal"]),
-        drinks:           EnumHelper.DrinksFromString(doc.data["drinks"]),
-        smokes:           EnumHelper.SmokesFromString(doc.data["smokes"]),
+        uid: doc.documentID,
+        firstname: doc.data["first_name"] ?? "",
+        lastname: doc.data["last_name"] ?? "",
+        age: doc.data["age"] ?? 0,
+        gender: EnumHelper.GenderFromString(doc.data["gender"]),
+        profession: doc.data["profession"] ?? "",
+        imagepath: doc.data["image_path"] ??
+            "images/mawra.jpg", //TODO: This should be some generic default avater
+        sect: EnumHelper.SectFromString(doc.data["sect"]),
+        religiousness:
+            EnumHelper.ReligiousnessFromString(doc.data["religiousness"]),
+        modesty: EnumHelper.ModestyFromString(doc.data["modesty"]),
+        prayer: EnumHelper.PrayerFromString(doc.data["prayer"]),
+        halal: EnumHelper.HalalFromString(doc.data["halal"]),
+        drinks: EnumHelper.DrinksFromString(doc.data["drinks"]),
+        smokes: EnumHelper.SmokesFromString(doc.data["smokes"]),
       );
     }).toList();
   }
@@ -73,4 +77,13 @@ class UserService {
     });
   }
 
+  Future<bool> updateHobbies(List<String> hobbies) async {
+    return Future<bool>(() {
+      return userCollection
+          .document(uid)
+          .updateData({"hobbies": hobbies}).then((_) {
+        return true;
+      });
+    });
+  }
 }

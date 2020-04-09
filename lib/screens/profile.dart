@@ -125,7 +125,7 @@ class _ProfileState extends State<Profile> {
           buildChip("Photography", "icons/photography.png", backColor, textColor),
           buildChip("Exercise", "icons/gym.png", backColor, textColor),
           buildChip("Cooking", "icons/cooking.png", backColor, textColor),
-          buildChip("Reading", "icons/book.png", backColor, textColor),
+          //buildChip("Reading", "icons/book.png", backColor, textColor),
         ],
       ),
     );

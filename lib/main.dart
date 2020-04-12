@@ -24,9 +24,6 @@ class _SparkState extends State<Spark> {
         title: "Spark!",
         debugShowCheckedModeBanner: false,
         home: Wrapper(),
-        routes: {
-          "/chat_profile": (context) => ChatProfile(),
-        },
       ),
     );
   }

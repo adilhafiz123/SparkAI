@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:Spark/models/user.dart';
 import 'package:Spark/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +25,7 @@ class _MessageTabState extends State<MessageTab> {
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterial(context));
     int messageCount = List.of(widget.messages).length;
+    var sigma = widget.userData.isBlurred ? 5.0 : 0.0;
 
     return InkWell(
       highlightColor: Colors.red[200].withOpacity(0.1),
@@ -44,14 +47,25 @@ class _MessageTabState extends State<MessageTab> {
                 bottom: BorderSide(width: 0.5, color: Colors.grey[300]))),
         child: Row(children: <Widget>[
           SizedBox(width: 16),
-          GestureDetector(
-            //onTap: () => Navigator.of(context)push(Profile()), //Navigator.of(context).push(MaterialPageRoute<void>(builder: (context) => ChatProfile())),
-            child: CircleAvatar(
+          Stack(
+            children: <Widget>[
+              CircleAvatar(
                 radius: 34,
                 backgroundImage: AssetImage(widget.userData.imagepath),
-            ),
+              ),
+                ClipOval(  // <-- clips to the child Containers dimensions
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX:sigma, sigmaY: sigma),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: 68.0,
+                      height: 68.0,
+                      child: Text(" "),
+                    ),
+                  ),
+                ),
+            ],
           ),
-          //),
           SizedBox(
             width: 15,
           ),
@@ -94,7 +108,6 @@ class _MessageTabState extends State<MessageTab> {
           )
         ]),
       ),
-      //),
     );
   }
 }

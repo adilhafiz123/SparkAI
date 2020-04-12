@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:Spark/models/userData.dart';
+import 'package:Spark/shared/helper.dart';
 
 class Profile extends StatefulWidget {
   final UserData userData;
@@ -12,17 +15,25 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   Widget buildPhoto() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Image.asset(
-          widget.userData.imagepath,
-          height: 420,
-          fit: BoxFit.cover,
+    var sigma = widget.userData.isBlurred ? 5.0 : 0.0;
+    return Stack(children: <Widget>[
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Image.asset(
+            widget.userData.imagepath,
+            height: 420,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
-    );
+      Positioned.fill(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
+            child: Container(color: Colors.black.withOpacity(0),),
+      ))
+    ]);
   }
 
   Widget buildIntro() {
@@ -52,12 +63,18 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  Widget buildChip(String label, String imagePath, Color backColor, Color textColor) {
+  Widget buildChipByPath(
+      String label, String imagePath, Color backColor, Color textColor) {
+    return buildChip(label, Image.asset(imagePath), backColor, textColor);
+  }
+
+  Widget buildChip(
+      String label, Image image, Color backColor, Color textColor) {
     return Chip(
-      elevation: 3,
+      elevation: 2,
       //shadowColor: backColor,
       label: Padding(
-        padding: const EdgeInsets.only(left:0, right:0, top:3, bottom:3),
+        padding: const EdgeInsets.only(left: 0, right: 0, top: 3, bottom: 3),
         child: Text(label,
             style: TextStyle(
                 fontSize: 14,
@@ -66,8 +83,8 @@ class _ProfileState extends State<Profile> {
                 color: textColor)),
       ),
       avatar: Padding(
-        padding: const EdgeInsets.only(left:1, right:0, top:3, bottom:3),
-        child: Image.asset(imagePath),
+        padding: const EdgeInsets.only(left: 1, right: 0, top: 3, bottom: 3),
+        child: image,
       ),
       backgroundColor: backColor,
       padding: EdgeInsets.only(left: 7, right: 8, top: 1, bottom: 1),
@@ -83,17 +100,20 @@ class _ProfileState extends State<Profile> {
         spacing: 10,
         alignment: WrapAlignment.center,
         children: <Widget>[
-          buildChip(widget.userData.profession, "icons/laptop.png", backColor, textColor),
-          buildChip("5' 11\"", "icons/double-arrow.png", backColor, textColor),
-          buildChip("Pakistani", "icons/pakistan.png", backColor, textColor),
-          buildChip("Urdu", "icons/language.png", backColor, textColor),
+          buildChipByPath(widget.userData.profession, "icons/laptop.png",
+              backColor, textColor),
+          buildChipByPath(widget.userData.height.toString(),
+              "icons/double-arrow.png", backColor, textColor),
+          buildChip(widget.userData.ethnicity,
+              Helper.getImage(widget.userData.ethnicity), backColor, textColor),
+          buildChipByPath("Urdu", "icons/language.png", backColor, textColor),
         ],
       ),
     );
   }
 
   Widget buildReligionChipCollection() {
-    var textColor = Color.fromRGBO(0, 19, 91, 1);
+    var textColor = Colors.black;
     var backColor = Color.fromRGBO(255, 202, 0, 1);
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -101,13 +121,20 @@ class _ProfileState extends State<Profile> {
         spacing: 10,
         alignment: WrapAlignment.center,
         children: <Widget>[
-          buildChip(widget.userData.sect.toString().split('.').last, "icons/islam.png", backColor, textColor),
-          buildChip(widget.userData.getPractisingLevel(), "icons/beads.png", backColor, textColor),
-          buildChip(widget.userData.modesty.toString().split('.').last, "icons/hijab.png", backColor, textColor),
-          buildChip(widget.userData.prayer.toString().split('.').last, "icons/pray2.png", backColor, textColor),
-          buildChip(widget.userData.halal.toString().split('.').last, "icons/halal.png", backColor, textColor),
-          buildChip(widget.userData.drinks.toString().split('.').last, "icons/wine.png", backColor, textColor),
-          buildChip(widget.userData.smokes.toString().split('.').last, "icons/smoke.png", backColor, textColor),
+          buildChipByPath(widget.userData.sect.toString().split('.').last,
+              "icons/islam.png", backColor, textColor),
+          buildChipByPath(widget.userData.getPractisingLevel(),
+              "icons/beads.png", backColor, textColor),
+          buildChipByPath(widget.userData.modesty.toString().split('.').last,
+              "icons/hijab.png", backColor, textColor),
+          buildChipByPath(widget.userData.prayer.toString().split('.').last,
+              "icons/pray2.png", backColor, textColor),
+          buildChipByPath(widget.userData.halal.toString().split('.').last,
+              "icons/halal.png", backColor, textColor),
+          buildChipByPath(widget.userData.drinks.toString().split('.').last,
+              "icons/wine.png", backColor, textColor),
+          buildChipByPath(widget.userData.smokes.toString().split('.').last,
+              "icons/smoke.png", backColor, textColor),
         ],
       ),
     );
@@ -119,18 +146,16 @@ class _ProfileState extends State<Profile> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Wrap(
-        spacing: 10,
-        alignment: WrapAlignment.center,
-        children: <Widget>[
-          buildChip("Photography", "icons/photography.png", backColor, textColor),
-          buildChip("Exercise", "icons/gym.png", backColor, textColor),
-          buildChip("Cooking", "icons/cooking.png", backColor, textColor),
-          //buildChip("Reading", "icons/book.png", backColor, textColor),
-        ],
-      ),
+          spacing: 10,
+          alignment: WrapAlignment.center,
+          children: widget.userData.hobbies == null
+              ? List()
+              : widget.userData.hobbies.map((hobby) {
+                  Image image = Helper.getImage(hobby);
+                  return buildChip(hobby, image, backColor, textColor);
+                }).toList()),
     );
   }
-
 
   Widget buildProfileText() {
     return Container(
@@ -150,18 +175,20 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        buildPhoto(),
-        buildIntro(),
-        buildBasicsChipCollection(),
-        Divider(),
-        buildReligionChipCollection(),
-        Divider(),
-        buildHobbiesChipCollection(),
-        Divider(),
-        buildProfileText(),
-      ],
+    return Scaffold(
+      body: ListView(
+        children: <Widget>[
+          buildPhoto(),
+          buildIntro(),
+          buildBasicsChipCollection(),
+          Divider(),
+          buildReligionChipCollection(),
+          if (widget.userData.hobbies.length > 0) Divider(),
+          if (widget.userData.hobbies.length > 0) buildHobbiesChipCollection(),
+          Divider(),
+          buildProfileText(),
+        ],
+      ),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:Spark/models/user.dart';
 import 'package:Spark/services/user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:Spark/shared/helper.dart';
 
 class Hobbies extends StatefulWidget {
   final hobbies = [
@@ -47,6 +48,8 @@ class Hobbies extends StatefulWidget {
     "Writing",
     "Yoga",
   ];
+
+
   @override
   _HobbiesState createState() => _HobbiesState();
 }
@@ -72,28 +75,15 @@ class _HobbiesState extends State<Hobbies> {
     );
   }
 
-  _getImage(String hobby) {
-    var filePath = "icons/" + hobby.toLowerCase().replaceAll(" ", "_") + ".png";
-    var image;
-    try {
-      image = Image.asset(
-        filePath,
-        height: 40,
-      );
-    } catch (_) {
-      image = Image.asset("icons/photography.png");
-    }
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: image,
-    );
-  }
 
   Widget _buildCheckListTile(BuildContext context, int index) {
     var hobby = widget.hobbies[index];
     return CheckboxListTile(
         value: _selectedHobbies.contains(hobby),
-        secondary: _getImage(hobby),
+        secondary: Padding(
+                    child: Helper.getImage(hobby),
+                    padding: EdgeInsets.all(10),
+                    ),
         dense: true,
         title: Text(
           hobby,

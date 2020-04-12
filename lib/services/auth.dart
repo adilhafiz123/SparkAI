@@ -1,3 +1,4 @@
+import 'package:Spark/models/userData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Spark/models/user.dart';
 import 'package:Spark/services/user.dart';
@@ -50,7 +51,7 @@ class AuthService {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password); 
       FirebaseUser user = result.user;
-      await UserService(uid: user.uid).updateCurrentUserData("NewMember", 0, "NewMemberProfession");
+      await UserService(uid: user.uid).updateCurrentUserData(UserData()); //TODO: We are adding an empty UserData!
       return _userFromFireBaseUser(user);
     } 
     catch(e) {

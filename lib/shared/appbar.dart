@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:Spark/services/chats.dart';
 import 'package:flutter/material.dart';
 
@@ -67,15 +69,31 @@ Widget buildMessagesAppBar() {
 }
 
 
-Widget buildChatProfileAppBar(String name, String imagePath) {
+Widget buildChatProfileAppBar(String name, String imagePath, bool isBlurred) {
+  var sigma = isBlurred ? 5.0 : 0.0;
   return AppBar(
     elevation: 0,
     iconTheme: IconThemeData(color: Colors.black),
     titleSpacing: 60,
     title: Row(children: <Widget>[
-      CircleAvatar(
-        radius: 18,
-        backgroundImage: AssetImage(imagePath),
+      Stack(
+        children: <Widget>[
+          CircleAvatar(
+            radius: 20,
+            backgroundImage: AssetImage(imagePath,),
+          ),
+            ClipOval(  // <-- clips to the child Containers dimensions
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX:sigma, sigmaY: sigma),
+                child: Container(
+                  alignment: Alignment.center,
+                  width: 40.0,
+                  height: 40.0,
+                  child: Text(" "),
+                ),
+              ),
+            ),
+        ],
       ),
       SizedBox(
         width: 10,

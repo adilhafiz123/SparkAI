@@ -1,4 +1,5 @@
 import 'package:Spark/models/userData.dart';
+import 'package:Spark/shared/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:Spark/shared/appbar.dart';
 import 'package:Spark/screens/profile.dart';
@@ -27,7 +28,25 @@ class DiscoverView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //TODO: This UserProfile needs to be generated randomly from the DiscoveryEngine
-    UserData tempUserData = UserData(imagepath: "images/mawra.jpg", uid: "temp_uid", firstname: "Mawra", age: 27, profession: "Actress");
+    UserData tempUserData = UserData(
+      uid: "temp_uid", 
+      firstname: "Mawra", 
+      age: 27, 
+      height: Height(5, 6),
+      imagepath: "images/mawra.jpg",
+      isBlurred: false, 
+      profession: "Actress",
+      ethnicity: "Pakistani",
+      language: "Urdu",
+      drinks: Drinks.Never,
+      gender: Gender.Female,
+      halal: Halal.Always,
+      prayer: Prayer.Sometimes,
+      religiousness: Religiousness.SomewhatPractising,
+      modesty: Modesty.None,
+      smokes: Smokes.Never,
+      sect: Sect.Sunni,
+      hobbies: List<String>());
     return Scaffold(
       appBar: buildDiscoverAppBar(),
       body: Container(

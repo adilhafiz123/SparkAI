@@ -93,7 +93,7 @@ class _HobbiesState extends State<Hobbies> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        activeColor: Color.fromRGBO(1, 170, 185, 1),
+        activeColor: Theme.of(context).primaryColor,
         onChanged: (checked) {
           if (checked) {
             if (_selectedHobbies.length < 6) {

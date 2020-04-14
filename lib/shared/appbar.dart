@@ -69,12 +69,21 @@ Widget buildMessagesAppBar() {
 }
 
 
-Widget buildChatProfileAppBar(String name, String imagePath, bool isBlurred) {
+Widget buildChatProfileAppBar(String name, String imagePath, bool isBlurred, BuildContext context) {
   var sigma = isBlurred ? 5.0 : 0.0;
   return AppBar(
     elevation: 0,
     iconTheme: IconThemeData(color: Colors.black),
     titleSpacing: 60,
+    leading: IconButton(
+      iconSize: 5,
+      icon: Image.asset(
+              "icons/back_arrow.png",
+              height: 25,
+              color: Colors.grey,
+            ), 
+      onPressed: () => Navigator.of(context).pop()
+    ), 
     title: Row(children: <Widget>[
       Stack(
         children: <Widget>[
@@ -107,10 +116,10 @@ Widget buildChatProfileAppBar(String name, String imagePath, bool isBlurred) {
     ]),
     backgroundColor: Colors.white,
     bottom: TabBar(
-      labelColor: Color.fromRGBO(1, 170, 185, 1),
+      labelColor: Theme.of(context).primaryColor,
       unselectedLabelColor: Colors.grey,
-      indicatorColor: Color.fromRGBO(1, 170, 185, 1),
-      //indicator: BoxDecoration(border: Border.all(width: 1, color: Color.fromRGBO(1, 170, 185, 1))),//color: Color.fromRGBO(1, 170, 185, 1)),
+      indicatorColor: Theme.of(context).primaryColor,
+      //indicator: BoxDecoration(border: Border.all(width: 1, color: Theme.of(context).primaryColor)),//color: Theme.of(context).primaryColor),
       labelStyle: TextStyle(
         color: Colors.grey,
         fontFamily: "nunito",

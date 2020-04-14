@@ -38,19 +38,31 @@ class _HomeState extends State<Home> {
           body: _tabs[_currentIndex],
           bottomNavigationBar: BottomNavigationBar(
               currentIndex: _currentIndex,
-              selectedItemColor: Color.fromRGBO(1, 170, 185, 1),
+              selectedItemColor: Theme.of(context).primaryColor,
+              selectedIconTheme: IconThemeData(color: Theme.of(context).primaryColor),
               items: [
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.account_box),
+                  icon: Image.asset(
+                    "icons/swipe.png", 
+                    width: 25,
+                    color: _currentIndex == 0 ? Theme.of(context).primaryColor : Colors.grey
+                    ),
                   title: Text("Discover", style: bnbStyle),
                 ),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.chat),
-                    title: Text("Messages",
-                        style: bnbStyle)
-                        ),
+                  icon: Image.asset(
+                    "icons/chat.png", 
+                    width: 25,
+                    color: _currentIndex == 1 ? Theme.of(context).primaryColor : Colors.grey
+                    ),
+                    title: Text("Messages",style: bnbStyle)
+                ),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.settings),
+                    icon: Image.asset(
+                    "icons/settings.png", 
+                    width: 25,
+                    color: _currentIndex == 2 ? Theme.of(context).primaryColor : Colors.grey
+                    ),
                     title: Text("Settings",
                         style: bnbStyle)
                         )

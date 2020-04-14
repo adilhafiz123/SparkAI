@@ -22,6 +22,10 @@ class _SparkState extends State<Spark> {
       create: (context) => AuthService().user,
       child: MaterialApp(
         title: "Spark!",
+        theme: ThemeData(
+          primaryColor: Color.fromRGBO(1, 170, 185, 1),
+          accentColor: Color.fromRGBO(255, 202, 0, 1),
+        ),
         debugShowCheckedModeBanner: false,
         home: Wrapper(),
       ),

@@ -93,7 +93,7 @@ class _ProfileState extends State<Profile> {
 
   Widget buildBasicsChipCollection() {
     var textColor = Colors.white;
-    var backColor = Color.fromRGBO(1, 170, 185, 1);
+    var backColor = Theme.of(context).primaryColor;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Wrap(
@@ -114,7 +114,7 @@ class _ProfileState extends State<Profile> {
 
   Widget buildReligionChipCollection() {
     var textColor = Colors.black;
-    var backColor = Color.fromRGBO(255, 202, 0, 1);
+    var backColor = Theme.of(context).accentColor;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Wrap(

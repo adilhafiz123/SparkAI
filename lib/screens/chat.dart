@@ -67,7 +67,7 @@ class _ChatViewState extends State<ChatView> {
         rows: 4,
         columns: 8,
         buttonMode: ButtonMode.MATERIAL,
-        indicatorColor: Color.fromRGBO(1, 170, 185, 1),
+        indicatorColor: Theme.of(context).primaryColor,
         noRecentsStyle: TextStyle(fontFamily: "Nunito", fontSize: 30),
         //recommendKeywords: ["laugh"],
         //numRecommended: 10,
@@ -122,7 +122,7 @@ class _ChatViewState extends State<ChatView> {
               //expands: true,
               textAlignVertical: TextAlignVertical.bottom,
               textCapitalization: TextCapitalization.sentences,
-              cursorColor: Color.fromRGBO(1, 170, 185, 1),
+              cursorColor: Theme.of(context).primaryColor,
               style: TextStyle(
                   fontFamily: "Nunito",
                   fontSize: 18,
@@ -136,37 +136,24 @@ class _ChatViewState extends State<ChatView> {
                   borderRadius: BorderRadius.all(Radius.circular(30)),
                   borderSide: BorderSide(width: 1),
                 ),
-                focusedBorder: const OutlineInputBorder(
+                focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: Color.fromRGBO(1, 170, 185, 1), width: 2.0),
+                      color: Theme.of(context).primaryColor, 
+                      width: 2.0
+                  ),
                   borderRadius: BorderRadius.all(Radius.circular(30)),
                 ),
               ),
-              //onChanged: (text) {
-              //setState(() {
-              //  _inputText = text;
-              //});
-              //},
-              // onTap: () {
-              //   setState(() {
-              //     _showEmojiKeyboard = false;
-              //     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-              //   });
-              // }
             ),
           )),
+          SizedBox(width: 4,),
           ButtonTheme(
             minWidth: 10,
             child: RaisedButton(
-              child: Icon(
-                Icons.send,
-                color: Colors.white,
-                size: 25,
-              ),
-              color: Color.fromRGBO(255, 202, 0, 1),
+              child: Image.asset("icons/send.png", color: Colors.white, height: 40,),
+              color: Theme.of(context).accentColor,
               elevation: 1,
-              padding:
-                  EdgeInsets.only(left: 17, right: 14, top: 14, bottom: 14),
+              padding: EdgeInsets.only(left: 14, right: 12, top: 14, bottom: 14),
               shape: CircleBorder(),
               onPressed: () {
                 String cleanedText = _cleanText(_textController.text);
@@ -184,7 +171,7 @@ class _ChatViewState extends State<ChatView> {
                 }
               },
             ),
-          )
+          ),
         ]));
   }
 
@@ -208,7 +195,7 @@ class _ChatViewState extends State<ChatView> {
                 fontFamily: "Nunito",
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: Color.fromRGBO(1, 170, 185, 1),
+                color: Theme.of(context).primaryColor,
               ),
             ),
             onPressed: () {
@@ -221,7 +208,7 @@ class _ChatViewState extends State<ChatView> {
                 fontFamily: "Nunito",
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: Color.fromRGBO(1, 170, 185, 1),
+                color: Theme.of(context).primaryColor,
               ),
             ),
             onPressed: () {
@@ -244,7 +231,7 @@ class _ChatViewState extends State<ChatView> {
               ? EdgeInsets.only(top: 3, bottom: 3)
               : EdgeInsets.only(top: 4, bottom: 4),
           child: Material(
-            elevation: hasEmoji ? 0 : 1,
+            elevation: hasEmoji ? 0 : isMe ? 1 : 0.5,
             borderRadius: isMe
                 ? BorderRadius.only(
                     topLeft: Radius.circular(20),
@@ -258,7 +245,7 @@ class _ChatViewState extends State<ChatView> {
             color: hasEmoji
                 ? Colors.transparent
                 : isMe
-                    ? Color.fromRGBO(1, 170, 185, 1)
+                    ? Theme.of(context).primaryColor
                     : Color.fromRGBO(240, 244, 253, 1),
             child: Container(
               child: Text(

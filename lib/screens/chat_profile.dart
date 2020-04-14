@@ -29,7 +29,11 @@ class _ChatProfileState extends State<ChatProfile> {
         length: 2,
         child: Scaffold(
           appBar: buildChatProfileAppBar(
-              widget.userData.firstname, widget.userData.imagepath, widget.userData.isBlurred),
+              widget.userData.firstname, 
+              widget.userData.imagepath, 
+              widget.userData.isBlurred,
+              context,
+            ),
           body: TabBarView(
             children: <Widget>[
               ChatView(theirUid: widget.userData.uid),

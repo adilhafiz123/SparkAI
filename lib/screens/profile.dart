@@ -1,8 +1,8 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:Spark/models/userData.dart';
 import 'package:Spark/shared/helper.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Profile extends StatefulWidget {
   final UserData userData;
@@ -14,6 +14,26 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  buildHeadline(context) {
+    return Padding(
+      padding: const EdgeInsets.all(11.0),
+      child: Text(
+        "Not all those who wander are lost...",
+        textAlign: TextAlign.center,
+        style: GoogleFonts.pacifico(
+            fontSize: 18,
+            color: Theme.of(context).accentColor,
+            shadows: <Shadow>[
+              Shadow(
+                offset: Offset(2.0, 2.0),
+                blurRadius: 3.0,
+                color: Colors.black,
+              ),
+            ]),
+      ),
+    );
+  }
+
   Widget buildPhoto() {
     var sigma = widget.userData.isBlurred ? 5.0 : 0.0;
     return Stack(children: <Widget>[
@@ -30,8 +50,10 @@ class _ProfileState extends State<Profile> {
       ),
       Positioned.fill(
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
-            child: Container(color: Colors.black.withOpacity(0),),
+        filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
+        child: Container(
+          color: Colors.black.withOpacity(0),
+        ),
       ))
     ]);
   }
@@ -178,7 +200,13 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       body: ListView(
         children: <Widget>[
-          buildPhoto(),
+          Stack(
+            alignment: Alignment.topCenter,
+            children: <Widget>[
+              buildPhoto(),
+              buildHeadline(context),
+            ]
+          ),
           buildIntro(),
           buildBasicsChipCollection(),
           Divider(),

@@ -14,13 +14,12 @@ PopupMenuItem<String> buildPopupMenuItem(String label, IconData iconData) {
 
 void onSelected(String choice) {}
 
-Widget buildDiscoverAppBar() {
+Widget buildAppBar(String heading, List<Widget> actions) {
   return AppBar(
     elevation: 0,
     iconTheme: IconThemeData(color: Colors.grey),
     titleSpacing: 60,
-    title: Text(
-      "Discover",
+    title: Text(heading,
       style: TextStyle(
         color: Colors.grey[700],
         fontFamily: "vidaloka",
@@ -32,41 +31,10 @@ Widget buildDiscoverAppBar() {
       image: AssetImage("images/sparks.png"),
       color: Colors.grey,
     ),
-    actions: <Widget>[
-      PopupMenuButton<String>(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          onSelected: onSelected,
-          itemBuilder: (BuildContext context) {
-            var item1 = buildPopupMenuItem("Favourite", Icons.star);
-            var item2 = buildPopupMenuItem("Block", Icons.block);
-            var item3 = buildPopupMenuItem("Report", Icons.report);
-            return [item1, item2, item3].toList();
-          }),
-    ],
+    actions: actions,
   );
 }
 
-Widget buildMessagesAppBar() {
-  return AppBar(
-    elevation: 0,
-    iconTheme: IconThemeData(color: Colors.grey),
-    titleSpacing: 60,
-    title: Text(
-      "Messages",
-      style: TextStyle(
-        color: Colors.grey[700],
-        fontFamily: "vidaloka",
-        fontSize: 28,
-      ),
-    ),
-    backgroundColor: Colors.white,
-    leading: Image(
-      image: AssetImage("images/sparks.png"),
-      color: Colors.grey,
-    ),
-  );
-}
 
 
 Widget buildChatProfileAppBar(String name, String imagePath, bool isBlurred, BuildContext context) {

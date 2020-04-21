@@ -1,6 +1,7 @@
 import 'package:Spark/shared/enums.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Spark/models/userData.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 
 class UserService {
   final String uid;
@@ -21,27 +22,66 @@ class UserService {
   }
 
   UserData _buildUserDataFromDoc(DocumentSnapshot doc) {
+      try {
       return UserData(
         uid: doc.documentID,
-        firstname:      doc.data["first_name"] ?? "",
-        lastname:       doc.data["last_name"] ?? "",
-        age:            doc.data["age"] ?? 0,
-        height:         _heightFromDb(doc.data["height"]),
-        gender:         EnumHelper.GenderFromString(doc.data["gender"]),
-        profession:     doc.data["profession"] ?? "",
-        ethnicity:      doc.data["ethnicity"] ?? "",
-        language:       doc.data["language"] ?? "",
-        imagepath:      doc.data["image_path"] ?? "images/mawra.jpg", //TODO: This should be some generic default avater
-        isBlurred:      doc.data["is_blurred"] ?? false,
-        sect:           EnumHelper.SectFromString(doc.data["sect"]),
-        religiousness:  EnumHelper.ReligiousnessFromString(doc.data["religiousness"]),
-        modesty:        EnumHelper.ModestyFromString(doc.data["modesty"]),
-        prayer:         EnumHelper.PrayerFromString(doc.data["prayer"]),
-        halal:          EnumHelper.HalalFromString(doc.data["halal"]),
-        drinks:         EnumHelper.DrinksFromString(doc.data["drinks"]),
-        smokes:         EnumHelper.SmokesFromString(doc.data["smokes"]),
-        hobbies:        doc.data["hobbies"] == null ? List<String>() :  List<String>.from(doc.data["hobbies"])
+        firstname:        doc.data["first_name"] ?? "",
+        lastname:         doc.data["last_name"] ?? "",
+        age:              doc.data["age"] ?? 0,
+        height:           _heightFromDb(doc.data["height"]),
+        gender:           EnumToString.fromString([Gender.Male, Gender.Female], doc.data["gender"]),
+        profession:       doc.data["profession"] ?? "",
+        ethnicity:        doc.data["ethnicity"] ?? "",
+        language:         doc.data["language"] ?? "",
+        isBlurred:        doc.data["is_blurred"] ?? false,
+        sect:             EnumToString.fromString([Sect.Sunni, Sect.Shia, Sect.Other],doc.data["sect"]),
+        religiousness:    EnumToString.fromString([
+                            Religiousness.VeryPractising, 
+                            Religiousness.Practising,
+                            Religiousness.SomewhatPractising, 
+                            Religiousness.NotPractising], doc.data["religiousness"]),
+        modesty:          EnumToString.fromString([Modesty.Hijab, Modesty.Modest, Modesty.None], doc.data["modesty"]),
+        prayer:           EnumToString.fromString([
+                            Prayer.Always,
+                            Prayer.Usually,
+                            Prayer.Sometimes,
+                            Prayer.Never], doc.data["prayer"]),
+        halal:            doc.data["halal"] ?? true,
+        drinks:           doc.data["drinks"] ?? false,
+        smokes:           doc.data["smokes"] ?? false,
+        imageNameUrlMap:  doc.data["image_urls"] == null ? Map<String,String>() :  Map<String,String>.from(doc.data["image_url_map"]),
+        hobbies:          doc.data["hobbies"] == null ? List<String>() :  List<String>.from(doc.data["hobbies"])
       );
+      }
+      catch(e) {
+        throw Exception("Could not construct UserData object from Snapshot " + e.toString());
+      }
+  }
+
+
+  Future updateCurrentUserData(UserData userData) async {
+    return await userCollection
+        .document(uid)
+        .updateData({
+            "first_name":      userData.firstname,
+            "last_name":       userData.lastname,
+            "age":             userData.age,
+            "height":          userData.height.toString(),
+            "gender":          EnumToString.parseCamelCase(userData.gender),
+            "profession":      userData.profession.toString(),
+            "ethnicity":       userData.ethnicity.toString(),
+            "language":        userData.language.toString(),
+            "isBlurred":       userData.isBlurred.toString(),
+            "sect":            EnumToString.parseCamelCase(userData.sect),
+            "religiousness":   EnumToString.parseCamelCase(userData.religiousness),
+            "modesty":         EnumToString.parseCamelCase(userData.modesty),
+            "prayer":          EnumToString.parseCamelCase(userData.prayer),
+            "halal":           EnumToString.parseCamelCase(userData.halal),
+            "drinks":          EnumToString.parseCamelCase(userData.drinks),
+            "smokes":          EnumToString.parseCamelCase(userData.smokes),
+            "image_url_map":   userData.imageNameUrlMap,
+            "hobbies":         userData.hobbies,
+          });
   }
 
   Future<UserData> getUserDocFutureFromUid(String uid) async {
@@ -50,27 +90,18 @@ class UserService {
     });
   }
 
-  List<UserData> _userDataListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc) {
-      return _buildUserDataFromDoc(doc);
-    }).toList();
-  }
+  // List<UserData> _userDataListFromSnapshot(QuerySnapshot snapshot) {
+  //   return snapshot.documents.map((doc) {
+  //     return _buildUserDataFromDoc(doc);
+  //   }).toList();
+  // }
 
-  // TODO: THIS NEEDS TO BE UPDATED 
-  // (this method should only be called after the full signup proces (which feeds through a UserData))
-  Future updateCurrentUserData(UserData userData) async {
-    return await userCollection
-        .document(uid)
-        .updateData({
-          "first_name":   userData.firstname,
-          "age":          userData.age,
-          "profession":   userData.profession
-          });
-  }
+  // Stream<List<UserData>> get userStream {
+  //   return userCollection.snapshots().map(_userDataListFromSnapshot);
+  // }
 
-
-  Stream<List<UserData>> get userStream {
-    return userCollection.snapshots().map(_userDataListFromSnapshot);
+  Stream<UserData> myUserStream(String myUid) {
+    return userCollection.document(myUid).snapshots().map(_buildUserDataFromDoc);
   }
 
   Future<List<String>> getHobbies(String uid) {
@@ -78,8 +109,10 @@ class UserService {
         .document(uid)
         .get()
         .then<List<String>>((DocumentSnapshot doc) {
-      return List<String>.from(doc.data["hobbies"]);
-    });
+          if (doc != null) {
+            return List<String>.from(doc.data["hobbies"]);
+          }
+        });
   }
 
   Future<bool> updateHobbies(List<String> hobbies) async {
@@ -87,6 +120,25 @@ class UserService {
       return userCollection
           .document(uid)
           .updateData({"hobbies": hobbies}).then((_) {
+        return true;
+      });
+    });
+  }
+
+    Future<Map<String,String>> getImageUrls(String myUid) {
+    return userCollection.document(uid).get()
+            .then<Map<String,String>>((DocumentSnapshot doc) {
+              if (doc != null && doc.data != null) {
+                return Map<String,String>.from(doc.data["image_urls"]);
+              }
+            });
+  }
+
+  Future<bool> updateImageNameUrlMap(Map<String,String> images) async {
+    return Future<bool>(() {
+      return userCollection
+          .document(uid)
+          .updateData({"image_urls": images}).then((_) {
         return true;
       });
     });

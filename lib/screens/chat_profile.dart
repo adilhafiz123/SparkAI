@@ -30,7 +30,7 @@ class _ChatProfileState extends State<ChatProfile> {
         child: Scaffold(
           appBar: buildChatProfileAppBar(
               widget.userData.firstname, 
-              widget.userData.imagepath, 
+              widget.userData.getMainImage(), 
               widget.userData.isBlurred,
               context,
             ),

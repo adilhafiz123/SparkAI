@@ -113,7 +113,7 @@ class _HobbiesState extends State<Hobbies> {
   @override
   Widget build(BuildContext context) {
     final myUid = Provider.of<User>(context).uid;
-    UserService().getHobbies(myUid).then<List<String>>((selectedHobbies) {
+    UserService(uid: myUid).getHobbies(myUid).then<List<String>>((selectedHobbies) {
       setState(() {
         if (!_firstLoadDone) {
           _selectedHobbies = selectedHobbies;

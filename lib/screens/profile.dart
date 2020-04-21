@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'package:Spark/screens/photo_viewer.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:Spark/models/userData.dart';
 import 'package:Spark/shared/helper.dart';
@@ -22,11 +24,11 @@ class _ProfileState extends State<Profile> {
         textAlign: TextAlign.center,
         style: GoogleFonts.pacifico(
             fontSize: 18,
-            color: Theme.of(context).accentColor,
+            color: Colors.white, //Theme.of(context).accentColor,
             shadows: <Shadow>[
               Shadow(
                 offset: Offset(2.0, 2.0),
-                blurRadius: 3.0,
+                blurRadius: 2.0,
                 color: Colors.black,
               ),
             ]),
@@ -35,17 +37,28 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget buildPhoto() {
-    var sigma = widget.userData.isBlurred ? 5.0 : 0.0;
+    var sigma = widget.userData != null ? (widget.userData.isBlurred ? 5.0 : 0.0) : 0.0;
     return Stack(children: <Widget>[
       Padding(
         padding: const EdgeInsets.all(8.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Image.asset(
-            widget.userData.imagepath,
-            height: 420,
-            fit: BoxFit.cover,
+        child: GestureDetector(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.asset(
+              widget.userData.getMainImage(),
+              height: 420,
+              fit: BoxFit.cover,
+            ),
           ),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                  builder: (context) {
+                    return PhotoViewer(widget.userData.imageNameUrlMap);
+                  }
+              )
+            );
+          },
         ),
       ),
       Positioned.fill(
@@ -145,7 +158,7 @@ class _ProfileState extends State<Profile> {
         children: <Widget>[
           buildChipByPath(widget.userData.sect.toString().split('.').last,
               "icons/islam.png", backColor, textColor),
-          buildChipByPath(widget.userData.getPractisingLevel(),
+          buildChipByPath(EnumToString.parseCamelCase(widget.userData.religiousness),
               "icons/beads.png", backColor, textColor),
           buildChipByPath(widget.userData.modesty.toString().split('.').last,
               "icons/hijab.png", backColor, textColor),
@@ -200,13 +213,10 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       body: ListView(
         children: <Widget>[
-          Stack(
-            alignment: Alignment.topCenter,
-            children: <Widget>[
-              buildPhoto(),
-              buildHeadline(context),
-            ]
-          ),
+          Stack(alignment: Alignment.topCenter, children: <Widget>[
+            buildPhoto(),
+            buildHeadline(context),
+          ]),
           buildIntro(),
           buildBasicsChipCollection(),
           Divider(),

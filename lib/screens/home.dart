@@ -1,5 +1,7 @@
+import 'package:Spark/models/userData.dart';
 import 'package:Spark/screens/settings.dart';
 import 'package:Spark/services/chats.dart';
+import 'package:Spark/services/user.dart';
 import 'package:flutter/material.dart';
 import 'package:Spark/models/user.dart';
 import 'package:Spark/models/chat.dart';
@@ -31,6 +33,7 @@ class _HomeState extends State<Home> {
     TextStyle bnbStyle = TextStyle(fontFamily: "Nunito" , fontWeight: FontWeight.w700,);
     return MultiProvider(
       providers: [
+        StreamProvider<UserData>(create: (context) => UserService(uid: myUid).myUserStream(myUid)),
         StreamProvider<List<Uid1Chat>>(create: (context) => ChatsService(myUid: myUid).getUID1Chats),
         StreamProvider<List<Uid2Chat>>(create: (context) => ChatsService(myUid: myUid).getUID2Chats),
       ],

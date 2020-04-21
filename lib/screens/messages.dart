@@ -11,7 +11,7 @@ import 'package:Spark/models/userData.dart';
 import 'package:provider/provider.dart';
 
 class MessageTab extends StatefulWidget {
-  final userData;
+  final UserData userData;
   final messages; //TODO: Prob not a good idea to have two copies of this in memory!
 
   MessageTab({this.userData, this.messages});
@@ -51,7 +51,7 @@ class _MessageTabState extends State<MessageTab> {
             children: <Widget>[
               CircleAvatar(
                 radius: 34,
-                backgroundImage: AssetImage(widget.userData.imagepath),
+                backgroundImage: AssetImage(widget.userData.getMainImage()),
               ),
                 ClipOval(  // <-- clips to the child Containers dimensions
                   child: BackdropFilter(
@@ -132,7 +132,7 @@ class _MessageViewState extends State<MessageView> {
     List<Chat> chats = uid1Chats + uid2Chats;
 
     return Scaffold(
-      appBar: buildMessagesAppBar(),
+      appBar: buildAppBar("Messages", List()),
       body: ListView.builder(
           itemCount: chats.length,
           itemBuilder: (_, index) {
@@ -140,16 +140,18 @@ class _MessageViewState extends State<MessageView> {
             var theirUid = chat.uid1 == myUid ? chat.uid2 : chat.uid1;
 
             return FutureBuilder<UserData>(
-                future:
-                    UserService(uid: myUid).getUserDocFutureFromUid(theirUid),
+                future: UserService(uid: myUid).getUserDocFutureFromUid(theirUid),
                 builder: (_, userDataSnapshot) {
-                  if (userDataSnapshot.connectionState ==
-                      ConnectionState.waiting) {
+                  if (userDataSnapshot.connectionState == ConnectionState.waiting) {
                     return Loading();
-                  } else {
+                  } 
+                  else if (userDataSnapshot.data != null) {
                     return MessageTab(
                         userData: userDataSnapshot.data,
                         messages: chat.messages);
+                  }
+                  else {
+                    return Container(child:Text("Returned UserData==null for UID:" + theirUid + "\n"));
                   }
                 });
           }),

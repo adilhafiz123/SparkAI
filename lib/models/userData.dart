@@ -8,7 +8,7 @@ class Height {
 
   @override
   String toString() {
-    return feet.toString() + "' " + inches.toString() + "\"";
+    return feet.toString() + "," + inches.toString();
   }
 }
 
@@ -22,15 +22,15 @@ class UserData {
   final String profession;
   final String ethnicity;
   final String language;
-  final String imagepath;
-  final bool isBlurred;
+  bool isBlurred;
   final Sect sect;
   final Religiousness religiousness;
   final Modesty modesty;
   final Prayer prayer;
-  final Halal halal;
-  final Drinks drinks;
-  final Smokes smokes;
+  final bool halal;
+  final bool drinks;
+  final bool smokes;
+  final Map<String,String> imageNameUrlMap;
   final List<String> hobbies;
 
   UserData({
@@ -43,7 +43,6 @@ class UserData {
     this.profession, 
     this.ethnicity,
     this.language,
-    this.imagepath = "images/mawra.jpg", //TODO: Should be the dafault male/female image
     this.isBlurred,
     this.sect,
     this.religiousness,
@@ -52,22 +51,12 @@ class UserData {
     this.halal,
     this.drinks,
     this.smokes,
+    this.imageNameUrlMap,
     this.hobbies,
   });
 
-  String getPractisingLevel() {
-    if (this.religiousness != null) {
-      switch(this.religiousness) {
-        case Religiousness.VeryPractising:
-          return "Very Practising";
-        case Religiousness.Practising:
-          return "Practising";
-        case Religiousness.SomewhatPractising:
-          return "Somewhat Practising";
-        case Religiousness.NotPractising:
-          return "Not Practising";
-      }
-    }
-    return "";
+  getMainImage() {
+    return this.imageNameUrlMap[this.uid + "/" + "0.jpg"] ?? "images/mawra/jpg"; //Todo:Replace this with default avatar
   }
+
 }

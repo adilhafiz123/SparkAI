@@ -1,16 +1,38 @@
-# spark
+<h1 align="center">🔥 SparkAI — Your AI-Powered Matchmaker 💘</h1>
 
-A new Flutter project.
+<p align="center">
+  A modern dating app,  
+  Powered by AI, driven by meaningful connections ✨  
+</p>
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## ✨ Features
 
-A few resources to get you started if this is your first Flutter project:
+💬 **AI Chat Assist** – Never run out of words! Get message suggestions using smart AI.  
+🧠 **Smart Matchmaking** – Python backend analyses preferences to suggest compatible matches.  
+📸 **Profile Cards** – Swipe-ready, interactive user profiles with bios and photos.  
+📍 **Nearby Matches** – Location-aware matching to find love close to you.  
+🔒 **Secure Authentication** – User login/signup handled safely and smoothly.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+---
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🛠️ Tech Stack
+
+#### 📱 Flutter (Frontend)
+
+#### 🐍 Python (Backend)
+
+#### 🔐 Supabase – for user auth and storage  
+#### 🧠 OpenAI API – for smart message assistance  
+#### 📍 Geolocation API – to match nearby users
+
+---
+
+
+🧑‍🎤 Creator
+Built by Adil Hafiz
+
+📝 License
+MIT License © 2025 Adil Hafiz
+
